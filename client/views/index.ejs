@@ -1,0 +1,1393 @@
+<%- include('partials/header') %>
+
+<!-- Custom CSS for Homepage -->
+<style>
+    :root {
+        --primary-soft: #6B8CFF;
+        --primary-gentle: #8AA9FF;
+        --secondary-soothing: #A8D5E5;
+        --accent-calm: #B8E0D2;
+        --text-warm: #4A4A4A;
+        --text-soft: #6B6B6B;
+        --bg-light: #FAFCFE;
+        --card-soft: #FFFFFF;
+        --shadow-gentle: 0 20px 40px -15px rgba(107, 140, 255, 0.2);
+        --gradient-calm: linear-gradient(145deg, #FFFFFF 0%, #F5F9FF 100%);
+    }
+
+    body {
+        background-color: var(--bg-light);
+        font-family: 'Inter', 'Poppins', sans-serif;
+        overflow-x: hidden;
+    }
+
+    /* Hero Section */
+    .hero-wrapper {
+        position: relative;
+        overflow: hidden;
+        min-height: 90vh;
+        display: flex;
+        align-items: center;
+        background: linear-gradient(135deg, #F0F7FF 0%, #E6F0FA 100%);
+    }
+
+    .floating-shapes {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        z-index: 1;
+        pointer-events: none;
+    }
+
+    .shape {
+        position: absolute;
+        background: rgba(107, 140, 255, 0.03);
+        border-radius: 50%;
+        animation: float 20s infinite ease-in-out;
+    }
+
+    .shape-1 {
+        width: 300px;
+        height: 300px;
+        top: -100px;
+        right: -100px;
+        background: linear-gradient(145deg, rgba(168, 213, 229, 0.1), rgba(107, 140, 255, 0.1));
+        animation-delay: -2s;
+    }
+
+    .shape-2 {
+        width: 200px;
+        height: 200px;
+        bottom: 50px;
+        left: 50px;
+        background: linear-gradient(145deg, rgba(184, 224, 210, 0.1), rgba(138, 169, 255, 0.1));
+        animation-delay: -5s;
+    }
+
+    .shape-3 {
+        width: 150px;
+        height: 150px;
+        top: 200px;
+        left: 20%;
+        background: linear-gradient(145deg, rgba(107, 140, 255, 0.05), rgba(168, 213, 229, 0.05));
+        animation-delay: -8s;
+    }
+
+    @keyframes float {
+        0%, 100% { transform: translate(0, 0) rotate(0deg); }
+        25% { transform: translate(20px, 20px) rotate(5deg); }
+        50% { transform: translate(-10px, 30px) rotate(-5deg); }
+        75% { transform: translate(-20px, 10px) rotate(3deg); }
+    }
+
+    .hero-content {
+        position: relative;
+        z-index: 10;
+        padding: 80px 0;
+    }
+
+    .welcome-badge {
+        background: rgba(107, 140, 255, 0.1);
+        color: var(--primary-soft);
+        padding: 8px 20px;
+        border-radius: 50px;
+        display: inline-block;
+        font-size: 0.9rem;
+        font-weight: 500;
+        margin-bottom: 25px;
+        backdrop-filter: blur(5px);
+        animation: slideInDown 0.8s ease;
+        border: 1px solid rgba(107, 140, 255, 0.2);
+    }
+
+    .hero-title {
+        font-size: 3.8rem;
+        font-weight: 700;
+        line-height: 1.2;
+        margin-bottom: 25px;
+        color: #1A2B4C;
+        animation: slideInUp 0.8s ease 0.2s both;
+    }
+
+    .hero-title span {
+        background: linear-gradient(135deg, var(--primary-soft), #4A6FA5);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        display: inline-block;
+    }
+
+    .hero-subtitle {
+        font-size: 1.2rem;
+        color: var(--text-soft);
+        margin-bottom: 35px;
+        line-height: 1.8;
+        max-width: 600px;
+        animation: slideInUp 0.8s ease 0.4s both;
+    }
+
+    .hero-buttons {
+        animation: slideInUp 0.8s ease 0.6s both;
+        margin-bottom: 40px;
+    }
+
+    .btn-primary-calm {
+        background: var(--primary-soft);
+        color: white;
+        padding: 15px 35px;
+        border-radius: 50px;
+        font-weight: 600;
+        border: none;
+        transition: all 0.3s ease;
+        box-shadow: 0 10px 25px rgba(107, 140, 255, 0.3);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn-primary-calm::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+        transition: left 0.5s ease;
+    }
+
+    .btn-primary-calm:hover::before {
+        left: 100%;
+    }
+
+    .btn-primary-calm:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 15px 35px rgba(107, 140, 255, 0.4);
+        background: #5A7AE0;
+    }
+
+    .btn-outline-calm {
+        background: transparent;
+        color: var(--primary-soft);
+        padding: 15px 35px;
+        border-radius: 50px;
+        font-weight: 600;
+        border: 2px solid var(--primary-soft);
+        transition: all 0.3s ease;
+        margin-left: 15px;
+    }
+
+    .btn-outline-calm:hover {
+        background: var(--primary-soft);
+        color: white;
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(107, 140, 255, 0.2);
+    }
+
+    .hero-image {
+        position: relative;
+        z-index: 10;
+        animation: fadeInRight 1s ease 0.4s both;
+    }
+
+    .hero-image img {
+        border-radius: 30px;
+        box-shadow: var(--shadow-gentle);
+        transition: transform 0.5s ease;
+    }
+
+    .hero-image:hover img {
+        transform: scale(1.02);
+    }
+
+    .floating-card {
+        position: absolute;
+        background: white;
+        padding: 15px 25px;
+        border-radius: 60px;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        animation: float 6s infinite ease-in-out;
+        backdrop-filter: blur(5px);
+        background: rgba(255,255,255,0.9);
+    }
+
+    .card-1 {
+        top: 20%;
+        right: -20px;
+        animation-delay: -1s;
+    }
+
+    .card-2 {
+        bottom: 20%;
+        left: -20px;
+        animation-delay: -3s;
+    }
+
+    .floating-card i {
+        color: var(--primary-soft);
+        font-size: 1.2rem;
+    }
+
+    /* Stats Section */
+    .stats-wrapper {
+        background: white;
+        padding: 40px 0;
+        border-radius: 50px 50px 0 0;
+        margin-top: -50px;
+        position: relative;
+        z-index: 20;
+        box-shadow: 0 -10px 30px rgba(0,0,0,0.02);
+    }
+
+    .stat-item {
+        text-align: center;
+        padding: 20px;
+        transition: transform 0.3s ease;
+    }
+
+    .stat-item:hover {
+        transform: translateY(-10px);
+    }
+
+    .stat-number {
+        font-size: 3rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, var(--primary-soft), #4A6FA5);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        line-height: 1;
+        margin-bottom: 5px;
+    }
+
+    .stat-label {
+        color: var(--text-soft);
+        font-size: 1rem;
+        font-weight: 500;
+    }
+
+    /* Features Section */
+    .section-title {
+        text-align: center;
+        margin-bottom: 60px;
+    }
+
+    .section-title h2 {
+        font-size: 2.5rem;
+        font-weight: 600;
+        color: #1A2B4C;
+        margin-bottom: 15px;
+        position: relative;
+        display: inline-block;
+    }
+
+    .section-title h2::after {
+        content: '';
+        position: absolute;
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 60px;
+        height: 3px;
+        background: linear-gradient(90deg, var(--primary-soft), var(--secondary-soothing));
+        border-radius: 3px;
+    }
+
+    .section-title p {
+        color: var(--text-soft);
+        font-size: 1.1rem;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    .feature-card {
+        background: var(--gradient-calm);
+        padding: 40px 25px;
+        border-radius: 30px;
+        text-align: center;
+        transition: all 0.4s ease;
+        position: relative;
+        overflow: hidden;
+        border: 1px solid rgba(107, 140, 255, 0.1);
+        height: 100%;
+        box-shadow: 0 10px 30px -15px rgba(107, 140, 255, 0.1);
+    }
+
+    .feature-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 5px;
+        background: linear-gradient(90deg, var(--primary-soft), var(--secondary-soothing));
+        transform: scaleX(0);
+        transition: transform 0.4s ease;
+    }
+
+    .feature-card:hover::before {
+        transform: scaleX(1);
+    }
+
+    .feature-card:hover {
+        transform: translateY(-15px);
+        box-shadow: 0 30px 45px -20px rgba(107, 140, 255, 0.3);
+        border-color: rgba(107, 140, 255, 0.2);
+    }
+
+    .feature-icon-wrapper {
+        width: 100px;
+        height: 100px;
+        margin: 0 auto 25px;
+        background: linear-gradient(135deg, rgba(107, 140, 255, 0.1), rgba(168, 213, 229, 0.1));
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+    }
+
+    .feature-card:hover .feature-icon-wrapper {
+        transform: scale(1.1) rotate(5deg);
+    }
+
+    .feature-icon-wrapper i {
+        font-size: 3rem;
+        background: linear-gradient(135deg, var(--primary-soft), #4A6FA5);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .feature-card h5 {
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: #1A2B4C;
+        margin-bottom: 15px;
+    }
+
+    .feature-card p {
+        color: var(--text-soft);
+        margin: 0;
+        line-height: 1.7;
+    }
+
+    /* Categories Section */
+    .categories-wrapper {
+        background: linear-gradient(135deg, #F5F9FF, #E8F0FE);
+        padding: 80px 0;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .category-card {
+        background: white;
+        padding: 30px 25px;
+        border-radius: 30px;
+        text-align: center;
+        transition: all 0.4s ease;
+        position: relative;
+        overflow: hidden;
+        cursor: pointer;
+        border: 1px solid rgba(107, 140, 255, 0.1);
+        height: 100%;
+        box-shadow: 0 10px 25px -10px rgba(0,0,0,0.05);
+    }
+
+    .category-card:hover {
+        transform: translateY(-10px) scale(1.02);
+        border-color: var(--primary-soft);
+        box-shadow: 0 25px 40px -15px rgba(107, 140, 255, 0.3);
+    }
+
+    .category-icon {
+        width: 80px;
+        height: 80px;
+        margin: 0 auto 20px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+    }
+
+    .category-card:hover .category-icon {
+        transform: rotateY(180deg);
+    }
+
+    .category-icon i {
+        font-size: 2.5rem;
+    }
+
+    .category-badge {
+        display: inline-block;
+        padding: 8px 20px;
+        border-radius: 50px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        margin-bottom: 15px;
+    }
+
+    /* Emergency Banner */
+    .emergency-wrapper {
+        background: linear-gradient(135deg, #FF6B6B, #FF8E8E);
+        padding: 60px 0;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .emergency-content {
+        position: relative;
+        z-index: 10;
+    }
+
+    .emergency-pulse {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+        animation: pulse 4s infinite;
+    }
+
+    @keyframes pulse {
+        0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0.5; }
+        50% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.2; }
+        100% { transform: translate(-50%, -50%) scale(0.8); opacity: 0.5; }
+    }
+
+    .emergency-card {
+        background: rgba(255,255,255,0.15);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255,255,255,0.2);
+        border-radius: 30px;
+        padding: 25px;
+        transition: all 0.3s ease;
+    }
+
+    .emergency-card:hover {
+        transform: translateY(-5px);
+        background: rgba(255,255,255,0.2);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+    }
+
+    /* Testimonial Section */
+    .testimonial-section {
+        padding: 80px 0;
+        background: white;
+    }
+
+    .testimonial-card {
+        background: var(--gradient-calm);
+        padding: 30px;
+        border-radius: 30px;
+        border: 1px solid rgba(107, 140, 255, 0.1);
+        transition: all 0.3s ease;
+        margin: 15px;
+    }
+
+    .testimonial-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-gentle);
+    }
+
+    .testimonial-text {
+        font-size: 1rem;
+        line-height: 1.8;
+        color: var(--text-soft);
+        margin-bottom: 20px;
+        font-style: italic;
+    }
+
+    .testimonial-author {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .author-avatar {
+        width: 50px;
+        height: 50px;
+        background: var(--primary-soft);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 600;
+    }
+
+    /* Animations */
+    @keyframes slideInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes slideInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes fadeInRight {
+        from {
+            opacity: 0;
+            transform: translateX(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    /* Mood Boosters */
+    .mood-booster {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        z-index: 1000;
+    }
+
+    .mood-btn {
+        width: 60px;
+        height: 60px;
+        background: var(--primary-soft);
+        border: none;
+        border-radius: 50%;
+        color: white;
+        font-size: 1.5rem;
+        cursor: pointer;
+        box-shadow: 0 10px 25px rgba(107, 140, 255, 0.4);
+        transition: all 0.3s ease;
+        animation: pulse 2s infinite;
+    }
+
+    .mood-btn:hover {
+        transform: scale(1.1);
+    }
+
+    .mood-message {
+        position: absolute;
+        bottom: 80px;
+        right: 0;
+        background: white;
+        padding: 15px 25px;
+        border-radius: 30px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        white-space: nowrap;
+        font-size: 1rem;
+        color: var(--text-warm);
+        border: 1px solid rgba(107, 140, 255, 0.2);
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+        transform: translateY(10px);
+    }
+
+    .mood-booster:hover .mood-message {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+    }
+
+    /* Breathing Exercise */
+    .breathing-exercise {
+        position: fixed;
+        bottom: 30px;
+        left: 30px;
+        z-index: 1000;
+    }
+
+    .breathing-btn {
+        width: 50px;
+        height: 50px;
+        background: var(--secondary-soothing);
+        border: none;
+        border-radius: 50%;
+        color: white;
+        font-size: 1.2rem;
+        cursor: pointer;
+        box-shadow: 0 10px 20px rgba(168, 213, 229, 0.4);
+        transition: all 0.3s ease;
+    }
+
+    .breathing-btn:hover {
+        transform: scale(1.1);
+        background: #95C5D9;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .hero-title {
+            font-size: 2.5rem;
+        }
+        
+        .hero-buttons {
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .btn-outline-calm {
+            margin-left: 0;
+        }
+        
+        .floating-card {
+            display: none;
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+        }
+    }
+</style>
+
+<!-- Hero Section -->
+<div class="hero-wrapper">
+    <div class="floating-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+    </div>
+    
+    <div class="container hero-content">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <div class="welcome-badge">
+                    <i class="fas fa-heart me-2"></i> You're not alone - We're here for you
+                </div>
+                
+                <h1 class="hero-title">
+                    Anonymous Student <span>Counseling & Support</span>
+                </h1>
+                
+                <p class="hero-subtitle">
+                    A safe, confidential space where you can share your concerns anonymously. 
+                    Connect with professional counselors or get instant automated support.
+                </p>
+                
+                <div class="hero-buttons">
+                    <% if (!user) { %>
+                        <a href="/login" class="btn btn-primary-calm">
+                            <i class="fas fa-sign-in-alt me-2"></i>Get Started
+                            <i class="fas fa-arrow-right ms-2"></i>
+                        </a>
+                        <button class="btn btn-outline-calm" data-bs-toggle="modal" data-bs-target="#infoModal">
+                            <i class="fas fa-info-circle me-2"></i>Learn More
+                        </button>
+                    <% } else { %>
+                        <a href="/<%= user.role %>-dashboard" class="btn btn-primary-calm">
+                            <i class="fas fa-tachometer-alt me-2"></i>Go to Dashboard
+                        </a>
+                    <% } %>
+                </div>
+                
+                <!-- Trust Indicators -->
+                <div class="d-flex gap-4">
+                    <div>
+                        <i class="fas fa-shield-alt text-primary me-1"></i>
+                        <span class="text-muted small">100% Anonymous</span>
+                    </div>
+                    <div>
+                        <i class="fas fa-lock text-primary me-1"></i>
+                        <span class="text-muted small">Encrypted</span>
+                    </div>
+                    <div>
+                        <i class="fas fa-clock text-primary me-1"></i>
+                        <span class="text-muted small">24/7 Available</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-6">
+                <div class="hero-image">
+                    <img src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
+                         alt="Counseling" class="img-fluid">
+                
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Stats Section -->
+<div class="stats-wrapper">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3 col-6">
+                <div class="stat-item">
+                    <div class="stat-number">500+</div>
+                    <div class="stat-label">Students Helped</div>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="stat-item">
+                    <div class="stat-number">24/7</div>
+                    <div class="stat-label">Support Available</div>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="stat-item">
+                    <div class="stat-number">10+</div>
+                    <div class="stat-label">Counselors</div>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="stat-item">
+                    <div class="stat-number">100%</div>
+                    <div class="stat-label">Anonymous</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Features Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="section-title">
+            <h2>How We Support You</h2>
+            <p>Creating a safe space for your mental well-being</p>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-md-3">
+                <div class="feature-card">
+                    <div class="feature-icon-wrapper">
+                        <i class="fas fa-user-secret"></i>
+                    </div>
+                    <h5>100% Anonymous</h5>
+                    <p>Your identity is completely protected. No personal information is required.</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="feature-card">
+                    <div class="feature-icon-wrapper">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <h5>Real-time Chat</h5>
+                    <p>Instant messaging with professional counselors. Get immediate responses.</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="feature-card">
+                    <div class="feature-icon-wrapper">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h5>Safe Space</h5>
+                    <p>Non-judgmental environment. All conversations are confidential.</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="feature-card">
+                    <div class="feature-icon-wrapper">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <h5>24/7 Support</h5>
+                    <p>Automated responses when counselors are offline. Emergency resources always available.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Categories Section -->
+<div class="categories-wrapper">
+    <div class="container">
+        <div class="section-title">
+            <h2>Support Categories</h2>
+            <p>Choose the area you need help with</p>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-md-3">
+                <div class="category-card">
+                    <div class="category-icon" style="background: rgba(107, 140, 255, 0.1);">
+                        <i class="fas fa-book-open" style="color: var(--primary-soft);"></i>
+                    </div>
+                    <span class="category-badge" style="background: rgba(107, 140, 255, 0.1); color: var(--primary-soft);">Academic</span>
+                    <p class="text-muted mb-0">Study stress, exam anxiety, time management, academic pressure</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="category-card">
+                    <div class="category-icon" style="background: rgba(40, 167, 69, 0.1);">
+                        <i class="fas fa-briefcase" style="color: #28A745;"></i>
+                    </div>
+                    <span class="category-badge" style="background: rgba(40, 167, 69, 0.1); color: #28A745;">Career</span>
+                    <p class="text-muted mb-0">Career choices, job search, internship guidance, professional development</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="category-card">
+                    <div class="category-icon" style="background: rgba(255, 193, 7, 0.1);">
+                        <i class="fas fa-family" style="color: #FFC107;"></i>
+                    </div>
+                    <span class="category-badge" style="background: rgba(255, 193, 7, 0.1); color: #FFC107;">Family</span>
+                    <p class="text-muted mb-0">Family conflicts, relationships, home issues, parental pressure</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="category-card">
+                    <div class="category-icon" style="background: rgba(220, 53, 69, 0.1);">
+                        <i class="fas fa-brain" style="color: #DC3545;"></i>
+                    </div>
+                    <span class="category-badge" style="background: rgba(220, 53, 69, 0.1); color: #DC3545;">Mental Health</span>
+                    <p class="text-muted mb-0">Anxiety, depression, stress management, emotional well-being</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Testimonials Section -->
+<section class="testimonial-section">
+
+
+<div class="container">
+    <div class="text-center mb-5">
+        <h2 class="fw-bold" style="color:#1a2639;">What Our Users Say</h2>
+        <p class="text-muted">Real experiences from students who found support here</p>
+    </div>
+
+    <div class="row g-4 mb-5" id="reviewsGrid">
+        <div class="col-12 text-center py-4">
+            <div class="spinner-border text-primary" role="status"></div>
+        </div>
+    </div>
+
+    <% if (locals.currentUser) { %>
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+                 <div style="background:linear-gradient(135deg,#ffffff,#f5f9ff);border-radius:28px;padding:32px;border:1px solid rgba(107,140,255,0.2);box-shadow:0 20px 50px rgba(107,140,255,0.12);">
+                <h5 class="fw-bold mb-1 text-center">Share Your Experience</h5>
+                <p class="text-muted text-center small mb-3">Your review helps others find support</p>
+                <div class="d-flex justify-content-center gap-2 mb-3" id="reviewStarRow">
+                    <i class="fas fa-star review-star" data-val="1" style="font-size:2.2rem;color:#d1d5db;cursor:pointer;transition:color .15s,transform .15s;"></i>
+                    <i class="fas fa-star review-star" data-val="2" style="font-size:2.2rem;color:#d1d5db;cursor:pointer;transition:color .15s,transform .15s;"></i>
+                    <i class="fas fa-star review-star" data-val="3" style="font-size:2.2rem;color:#d1d5db;cursor:pointer;transition:color .15s,transform .15s;"></i>
+                    <i class="fas fa-star review-star" data-val="4" style="font-size:2.2rem;color:#d1d5db;cursor:pointer;transition:color .15s,transform .15s;"></i>
+                    <i class="fas fa-star review-star" data-val="5" style="font-size:2.2rem;color:#d1d5db;cursor:pointer;transition:color .15s,transform .15s;"></i>
+                </div>
+                <textarea id="reviewText" class="form-control mb-3" rows="3" placeholder="Tell us about your experience..." style="border-radius:12px;border:1.5px solid #e2e8f0;resize:none;"></textarea>
+                
+                <!-- Find this button and add the id -->
+               <button 
+                    id="reviewSubmitBtn"
+                    onclick="submitWebsiteReview()" 
+                    style="background:linear-gradient(135deg,#667eea,#764ba2);color:white;border:none;border-radius:30px;padding:12px;font-weight:600;width:100%;cursor:pointer;">
+                    <i class="fas fa-paper-plane me-2"></i>Submit Review
+             </button>
+
+                <div id="reviewSuccessMsg" style="display:none;text-align:center;margin-top:14px;color:#10b981;font-weight:600;">
+                    <i class="fas fa-check-circle me-1"></i>Thank you for your review!
+                </div>
+                <div id="reviewAlreadyMsg" style="display:none;text-align:center;margin-top:14px;color:#64748b;font-size:.9rem;">
+                    You've already reviewed this platform. Thank you! 🙏
+                </div>
+            </div>
+        </div>
+    </div>
+    <% } else { %>
+    <div class="text-center mt-2">
+        <p class="text-muted"><a href="/login" style="color:#667eea;font-weight:600;">Log in</a> to share your experience</p>
+    </div>
+    <% } %>
+</div>
+   
+   
+</section>
+
+<!-- Emergency Banner -->
+<div class="emergency-wrapper">
+    <div class="emergency-pulse"></div>
+    <div class="container emergency-content">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 text-center text-white">
+                <i class="fas fa-exclamation-triangle fa-3x mb-4"></i>
+                <h2 class="mb-3">24/7 Emergency Support</h2>
+                <p class="lead mb-5">If you're in crisis, immediate help is available. You are not alone.</p>
+                
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <div class="emergency-card">
+                            <h4><i class="fas fa-phone-alt me-2"></i>988 Lifeline</h4>
+                            <p class="h3 mb-0">Call or Text 988</p>
+                            <small>Available 24/7</small>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="emergency-card">
+                            <h4><i class="fas fa-comment-dots me-2"></i>Crisis Text Line</h4>
+                            <p class="h3 mb-0">Text HOME to 741741</p>
+                            <small>24/7 Support</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Mood Booster -->
+<div class="mood-booster">
+    <button class="mood-btn" onclick="showMoodMessage()">
+        <i class="fas fa-smile"></i>
+    </button>
+    <div class="mood-message" id="moodMessage">
+        You're doing great! 🌟
+    </div>
+</div>
+
+<!-- Breathing Exercise -->
+<div class="breathing-exercise">
+    <button class="breathing-btn" onclick="startBreathing()">
+        <i class="fas fa-lungs"></i>
+    </button>
+</div>
+
+<!-- Info Modal -->
+<div class="modal fade" id="infoModal" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content" style="border-radius: 30px; border: none;">
+            <div class="modal-header bg-primary text-white" style="border-radius: 30px 30px 0 0;">
+                <h5 class="modal-title"><i class="fas fa-heart me-2"></i>About Anonymous Counseling System</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6><i class="fas fa-check-circle text-success me-2"></i>How It Works</h6>
+                        <ul class="list-unstyled">
+                            <li class="mb-2">✓ Create an anonymous account</li>
+                            <li class="mb-2">✓ Choose your concern category</li>
+                            <li class="mb-2">✓ Chat with counselors in real-time</li>
+                            <li class="mb-2">✓ Get automated support when offline</li>
+                            <li class="mb-2">✓ Access emergency resources 24/7</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h6><i class="fas fa-shield-alt text-primary me-2"></i>Privacy & Security</h6>
+                        <p>All conversations are encrypted and anonymous. We never store your personal information. Your identity is protected at all times.</p>
+                        
+                        <div class="alert alert-light mt-3">
+                            <i class="fas fa-clock me-2"></i>
+                            <strong>Average response time:</strong> 5-10 minutes
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<script>
+let websiteRating = 0;
+let currentEditingId = null; // ✅ Track which review is being edited
+
+document.addEventListener('DOMContentLoaded', () => {
+    loadWebsiteReviews();
+    checkIfAlreadyReviewed();
+
+    document.querySelectorAll('.review-star').forEach(star => {
+        star.addEventListener('click', () => {
+            websiteRating = parseInt(star.dataset.val);
+            document.querySelectorAll('.review-star').forEach((s, i) => {
+                s.style.color = i < websiteRating ? '#fbbf24' : '#d1d5db';
+                s.style.transform = i < websiteRating ? 'scale(1.2)' : 'scale(1)';
+            });
+        });
+        star.addEventListener('mouseenter', () => {
+            const val = parseInt(star.dataset.val);
+            document.querySelectorAll('.review-star').forEach((s, i) => {
+                s.style.color = i < val ? '#fbbf24' : '#d1d5db';
+            });
+        });
+        star.addEventListener('mouseleave', () => {
+            document.querySelectorAll('.review-star').forEach((s, i) => {
+                s.style.color = i < websiteRating ? '#fbbf24' : '#d1d5db';
+            });
+        });
+    });
+});
+
+async function loadWebsiteReviews() {
+    try {
+        const res = await fetch('/api/ratings/website');
+        const data = await res.json();
+        const grid = document.getElementById('reviewsGrid');
+        const currentUserId = '<%= locals.currentUser ? locals.currentUser._id.toString() : "" %>';
+
+        if (!data.success || data.reviews.length === 0) {
+            grid.innerHTML = `
+                <div class="col-12 text-center py-5">
+                    <div style="background:linear-gradient(135deg,#f0f7ff,#e6f0fa);border-radius:20px;padding:40px;border:2px dashed #6B8CFF33;">
+                        <i class="fas fa-comment-dots" style="font-size:3rem;color:#6B8CFF;opacity:0.5;margin-bottom:15px;display:block;"></i>
+                        <p style="color:#6B6B6B;margin:0;font-size:1.1rem;">Be the first to share your experience!</p>
+                    </div>
+                </div>`;
+            return;
+        }
+
+        grid.innerHTML = data.reviews.map(r => {
+            // ✅ Safe string comparison — both converted to string
+            const isAuthor = currentUserId && r.studentId && currentUserId === String(r.studentId);
+            
+            // ✅ Escape review text safely for use in data attribute
+            const safeText = r.reviewText.replace(/"/g, '&quot;');
+            
+            const authorActions = isAuthor ? `
+                <div style="display:flex;gap:8px;margin-top:10px;">
+                    <button 
+                        data-id="${r._id}" 
+                        data-rating="${r.rating}" 
+                        data-text="${safeText}"
+                        onclick="editReview(this)"
+                        style="background:#6B8CFF;color:white;border:none;border-radius:20px;padding:5px 14px;font-size:0.8rem;cursor:pointer;">
+                        <i class="fas fa-edit me-1"></i>Edit
+                    </button>
+                    <button 
+                        data-id="${r._id}"
+                        onclick="deleteReview(this)"
+                        style="background:#ef4444;color:white;border:none;border-radius:20px;padding:5px 14px;font-size:0.8rem;cursor:pointer;">
+                        <i class="fas fa-trash me-1"></i>Delete
+                    </button>
+                </div>` : '';
+
+            return `
+            <div class="col-md-6 col-lg-4" id="review-card-${r._id}">
+                <div style="background:white;border-radius:24px;padding:28px 24px;border:1px solid rgba(107,140,255,0.15);box-shadow:0 8px 30px rgba(107,140,255,0.08);height:100%;transition:transform 0.3s ease,box-shadow 0.3s ease;"
+                     onmouseenter="this.style.transform='translateY(-5px)';this.style.boxShadow='0 15px 40px rgba(107,140,255,0.15)'"
+                     onmouseleave="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 30px rgba(107,140,255,0.08)'">
+                    <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+                        <div style="width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#6B8CFF,#A8D5E5);display:flex;align-items:center;justify-content:center;color:white;flex-shrink:0;">
+                            <i class="fas fa-user-secret" style="font-size:1.2rem;"></i>
+                        </div>
+                        <div>
+                            <div style="font-weight:700;color:#1A2B4C;font-size:0.95rem;">${r.username}</div>
+                            <div style="color:#fbbf24;font-size:1rem;letter-spacing:1px;">${'★'.repeat(r.rating)}${'☆'.repeat(5 - r.rating)}</div>
+                        </div>
+                    </div>
+                    <div style="background:linear-gradient(135deg,#f8faff,#f0f7ff);border-radius:14px;padding:14px 16px;margin-bottom:14px;border-left:3px solid #6B8CFF;">
+                        <p style="color:#475569;line-height:1.7;font-size:0.95rem;margin:0;font-style:italic;">"${r.reviewText}"</p>
+                    </div>
+                    <div style="color:#94a3b8;font-size:0.78rem;display:flex;align-items:center;gap:5px;">
+                        <i class="fas fa-clock"></i>
+                        ${new Date(r.date).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}
+                    </div>
+                    ${authorActions}
+                </div>
+            </div>`;
+        }).join('');
+    } catch(e) {
+        console.error('Load reviews error:', e);
+    }
+}
+
+// ✅ Now receives the button element directly — no selector guesswork
+function editReview(btnEl) {
+    const reviewId = btnEl.dataset.id;
+    const currentRating = parseInt(btnEl.dataset.rating);
+    const currentText = btnEl.dataset.text.replace(/&quot;/g, '"');
+
+    currentEditingId = reviewId; // ✅ Store globally
+
+    websiteRating = currentRating;
+    document.getElementById('reviewText').value = currentText;
+
+    document.querySelectorAll('.review-star').forEach((s, i) => {
+        s.style.color = i < currentRating ? '#fbbf24' : '#d1d5db';
+        s.style.transform = i < currentRating ? 'scale(1.2)' : 'scale(1)';
+    });
+
+    // ✅ Update button to show Update mode
+    const submitBtn = document.getElementById('reviewSubmitBtn');
+    submitBtn.innerHTML = '<i class="fas fa-save me-2"></i>Update Review';
+    submitBtn.style.background = 'linear-gradient(135deg,#10b981,#059669)';
+    submitBtn.disabled = false;
+    submitBtn.style.opacity = '1';
+
+    document.getElementById('reviewAlreadyMsg').style.display = 'none';
+    document.getElementById('reviewSuccessMsg').style.display = 'none';
+
+    submitBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+async function deleteReview(btnEl) {
+    const reviewId = btnEl.dataset.id;
+    if (!confirm('Delete your review?')) return;
+
+    try {
+        const res = await fetch(`/api/ratings/website/${reviewId}`, {
+            method: 'DELETE',
+            credentials: 'same-origin'
+        });
+        const data = await res.json();
+        if (data.success) {
+            document.getElementById(`review-card-${reviewId}`)?.remove();
+            showReviewToast('Review deleted!', 'success');
+            currentEditingId = null;
+
+            // Re-enable submit form
+            const submitBtn = document.getElementById('reviewSubmitBtn');
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.style.opacity = '1';
+                submitBtn.style.background = 'linear-gradient(135deg,#667eea,#764ba2)';
+                submitBtn.innerHTML = '<i class="fas fa-paper-plane me-2"></i>Submit Review';
+            }
+            document.getElementById('reviewAlreadyMsg').style.display = 'none';
+            document.getElementById('reviewText').value = '';
+            websiteRating = 0;
+            document.querySelectorAll('.review-star').forEach(s => {
+                s.style.color = '#d1d5db';
+                s.style.transform = 'scale(1)';
+            });
+        } else {
+            showReviewToast(data.message, 'error');
+        }
+    } catch(e) {
+        showReviewToast('Error deleting review', 'error');
+    }
+}
+
+// ✅ Single unified submit function — handles both create and update
+async function submitWebsiteReview() {
+    if (!websiteRating) {
+        showReviewToast('Please select a star rating first! ⭐', 'error');
+        return;
+    }
+    const reviewText = document.getElementById('reviewText').value.trim();
+    if (!reviewText) {
+        showReviewToast('Please write a short review!', 'error');
+        return;
+    }
+
+    const submitBtn = document.getElementById('reviewSubmitBtn');
+    const isEditing = !!currentEditingId;
+    const origText = submitBtn.innerHTML;
+
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>' + (isEditing ? 'Updating...' : 'Submitting...');
+    submitBtn.disabled = true;
+
+    try {
+        const url = isEditing ? `/api/ratings/website/${currentEditingId}` : '/api/ratings/website';
+        const method = isEditing ? 'PUT' : 'POST';
+
+        const res = await fetch(url, {
+            method,
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'same-origin',
+            body: JSON.stringify({ rating: websiteRating, reviewText })
+        });
+        const data = await res.json();
+
+        if (data.success) {
+            showReviewToast(isEditing ? 'Review updated!' : 'Review submitted!', 'success');
+
+            // Reset form
+            document.getElementById('reviewText').value = '';
+            websiteRating = 0;
+            currentEditingId = null;
+            document.querySelectorAll('.review-star').forEach(s => {
+                s.style.color = '#d1d5db';
+                s.style.transform = 'scale(1)';
+            });
+
+            submitBtn.innerHTML = '<i class="fas fa-check me-2"></i>' + (isEditing ? 'Updated!' : 'Submitted!');
+            submitBtn.style.background = 'linear-gradient(135deg,#10b981,#059669)';
+
+            setTimeout(() => {
+                // After update: lock again (already reviewed); after new submit: lock too
+                submitBtn.disabled = true;
+                submitBtn.style.opacity = '0.6';
+                submitBtn.innerHTML = '<i class="fas fa-check me-2"></i>Already Reviewed';
+                document.getElementById('reviewAlreadyMsg').style.display = 'block';
+                document.getElementById('reviewSuccessMsg').style.display = isEditing ? 'none' : 'block';
+            }, 1500);
+
+            setTimeout(loadWebsiteReviews, 500);
+        } else {
+            submitBtn.innerHTML = origText;
+            submitBtn.disabled = false;
+            showReviewToast(data.message || 'Error. Please try again.', 'error');
+        }
+    } catch(e) {
+        submitBtn.innerHTML = origText;
+        submitBtn.disabled = false;
+        showReviewToast('Server error. Please try again.', 'error');
+    }
+}
+
+function checkIfAlreadyReviewed() {
+    fetch('/api/ratings/website/check', { credentials: 'same-origin' })
+        .then(r => { if (!r.ok) return null; return r.json(); })
+        .then(data => {
+            if (data && data.hasReviewed) {
+                const msg = document.getElementById('reviewAlreadyMsg');
+                if (msg) msg.style.display = 'block';
+                const btn = document.getElementById('reviewSubmitBtn');
+                if (btn) {
+                    btn.disabled = true;
+                    btn.style.opacity = '0.6';
+                    btn.innerHTML = '<i class="fas fa-check me-2"></i>Already Reviewed';
+                }
+            }
+        })
+        .catch(() => {});
+}
+
+function showReviewToast(message, type) {
+    const existing = document.getElementById('reviewToast');
+    if (existing) existing.remove();
+    const toast = document.createElement('div');
+    toast.id = 'reviewToast';
+    toast.style.cssText = `
+        position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(80px);
+        background:${type === 'error' ? '#ef4444' : '#10b981'};color:white;
+        padding:14px 28px;border-radius:50px;font-weight:600;font-size:0.95rem;
+        box-shadow:0 10px 30px rgba(0,0,0,0.15);z-index:99999;
+        transition:transform 0.3s ease;display:flex;align-items:center;gap:8px;`;
+    toast.innerHTML = `<i class="fas fa-${type === 'error' ? 'exclamation-circle' : 'check-circle'}"></i>${message}`;
+    document.body.appendChild(toast);
+    setTimeout(() => toast.style.transform = 'translateX(-50%) translateY(0)', 10);
+    setTimeout(() => {
+        toast.style.transform = 'translateX(-50%) translateY(80px)';
+        setTimeout(() => toast.remove(), 300);
+    }, 3000);
+}
+</script>
+
+
+
+<script>
+// Mood booster messages
+const moodMessages = [
+    "You're stronger than you think! 💪",
+    "This too shall pass 🌈",
+    "Take a deep breath 🌬️",
+    "You matter! ❤️",
+    "Small steps are still progress 👣",
+    "It's okay to not be okay 🌻",
+    "You're doing amazing! ✨",
+    "Hope is on the way 🌅"
+];
+
+let messageIndex = 0;
+
+function showMoodMessage() {
+    const messageEl = document.getElementById('moodMessage');
+    messageEl.style.opacity = '1';
+    messageEl.style.visibility = 'visible';
+    
+    // Cycle through messages
+    messageEl.textContent = moodMessages[messageIndex];
+    messageIndex = (messageIndex + 1) % moodMessages.length;
+    
+    // Hide after 3 seconds
+    setTimeout(() => {
+        messageEl.style.opacity = '0';
+        messageEl.style.visibility = 'hidden';
+    }, 3000);
+    
+    // Play gentle sound
+    playGentleSound();
+}
+
+function playGentleSound() {
+    const audio = new Audio('data:audio/wav;base64,UklGRlwAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YVAAAAA8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'); // Silent audio
+    audio.volume = 0.1;
+    audio.play().catch(e => {});
+}
+
+// Breathing exercise
+function startBreathing() {
+    const btn = document.querySelector('.breathing-btn');
+    const originalHTML = btn.innerHTML;
+    
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+    
+    const steps = [
+        { text: 'Breathe In...', duration: 4000 },
+        { text: 'Hold...', duration: 4000 },
+        { text: 'Breathe Out...', duration: 4000 }
+    ];
+    
+    let step = 0;
+    
+   function doStep() {
+    if (step < steps.length) {
+        btn.innerHTML = steps[step].text;
+        const dur = steps[step].duration;
+        step++;
+        setTimeout(doStep, dur);
+    } else {
+        btn.innerHTML = originalHTML;
+    }
+}
+    doStep();
+}
+
+// Animated counter for stats
+function animateValue(element, start, end, duration) {
+    const range = end - start;
+    const increment = range / (duration / 16);
+    let current = start;
+    
+    const timer = setInterval(() => {
+        current += increment;
+        if (current >= end) {
+            current = end;
+            clearInterval(timer);
+        }
+        element.textContent = Math.floor(current) + (element.id.includes('247') ? '' : '+');
+    }, 16);
+}
+
+// Start counters when visible
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            document.querySelectorAll('.stat-number').forEach(stat => {
+                const value = stat.textContent.replace('+', '');
+                if (value === '24/7') return;
+                animateValue(stat, 0, parseInt(value), 2000);
+            });
+            observer.disconnect();
+        }
+    });
+});
+
+observer.observe(document.querySelector('.stats-wrapper'));
+
+
+
+// Welcome message for new users
+if (!localStorage.getItem('visited')) {
+    setTimeout(() => {
+        alert('Welcome! Remember, you are not alone. We are here to support you. 💙');
+        localStorage.setItem('visited', 'true');
+    }, 2000);
+}
+</script>
+
+<%- include('partials/footer') %>

@@ -1,0 +1,668 @@
+<%- include('partials/header') %>
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
+                <div class="card-header bg-primary text-white text-center py-4">
+                    <i class="fas fa-user-plus fa-3x mb-3"></i>
+                    <h4 class="mb-0">Create Account</h4>
+                    <p class="text-white-50 mb-0">Join our anonymous counseling community</p>
+                </div>
+                
+                <div class="card-body p-4">
+                    <!-- Progress Bar -->
+                    <div class="progress mb-4" style="height: 5px;">
+                        <div class="progress-bar bg-success" role="progressbar" id="signupProgress" style="width: 33%"></div>
+                    </div>
+                    
+                    <!-- Alert Messages -->
+                    <div id="alertMessage" class="alert d-none"></div>
+                    
+                    <!-- Signup Form -->
+                    <form id="signupForm" novalidate>
+                        <!-- Step 1: Basic Info -->
+                        <div class="step" id="step1">
+                            <h5 class="mb-3">Step 1: Basic Information</h5>
+                            
+                            <div class="mb-3">
+                                <label for="username" class="form-label">
+                                    <i class="fas fa-user me-2"></i>Username
+                                </label>
+                                <input type="text" class="form-control form-control-lg" id="username" 
+                                       placeholder="Choose a username" required 
+                                       pattern="[a-zA-Z0-9_]{3,20}"
+                                       title="Username must be 3-20 characters and can only contain letters, numbers, and underscores">
+                                <div class="invalid-feedback" id="usernameError"></div>
+                                <small class="text-muted">3-20 characters, letters, numbers, and underscores only</small>
+                                <div class="valid-feedback">Looks good!</div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="email" class="form-label">
+                                    <i class="fas fa-envelope me-2"></i>Email Address
+                                </label>
+                                <input type="email" class="form-control form-control-lg" id="email" 
+                                       placeholder="Enter your email" required>
+                                <div class="invalid-feedback" id="emailError"></div>
+                                <small class="text-muted">We'll never share your email</small>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="firstName" class="form-label">
+                                        <i class="fas fa-signature me-2"></i>First Name
+                                    </label>
+                                    <input type="text" class="form-control" id="firstName" 
+                                           placeholder="First name (optional)">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="lastName" class="form-label">
+                                        <i class="fas fa-signature me-2"></i>Last Name
+                                    </label>
+                                    <input type="text" class="form-control" id="lastName" 
+                                           placeholder="Last name (optional)">
+                                </div>
+                            </div>
+                            
+                            <div class="d-flex justify-content-end">
+                                <button type="button" class="btn btn-primary" onclick="nextStep(2)">
+                                    Next <i class="fas fa-arrow-right ms-2"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Step 2: Security -->
+                        <div class="step" id="step2" style="display: none;">
+                            <h5 class="mb-3">Step 2: Security</h5>
+                            
+                            <div class="mb-3">
+                                <label for="password" class="form-label">
+                                    <i class="fas fa-lock me-2"></i>Password
+                                </label>
+                                <input type="password" class="form-control form-control-lg" id="password" 
+                                       placeholder="Create a strong password" required 
+                                       minlength="8"
+                                       pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$">
+                                <div class="invalid-feedback" id="passwordError"></div>
+                                
+                                <!-- Password Strength Meter -->
+                                <div class="mt-2">
+                                    <div class="progress" style="height: 5px;">
+                                        <div class="progress-bar" id="passwordStrength" role="progressbar" style="width: 0%"></div>
+                                    </div>
+                                    <small class="text-muted" id="passwordStrengthText">Enter password</small>
+                                </div>
+                                
+                                <ul class="password-requirements list-unstyled mt-2 small">
+                                    <li id="req-length" class="text-muted">
+                                        <i class="fas fa-circle me-1"></i> At least 8 characters
+                                    </li>
+                                    <li id="req-uppercase" class="text-muted">
+                                        <i class="fas fa-circle me-1"></i> At least one uppercase letter
+                                    </li>
+                                    <li id="req-lowercase" class="text-muted">
+                                        <i class="fas fa-circle me-1"></i> At least one lowercase letter
+                                    </li>
+                                    <li id="req-number" class="text-muted">
+                                        <i class="fas fa-circle me-1"></i> At least one number
+                                    </li>
+                                    <li id="req-special" class="text-muted">
+                                        <i class="fas fa-circle me-1"></i> At least one special character (@$!%*?&)
+                                    </li>
+                                </ul>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="confirmPassword" class="form-label">
+                                    <i class="fas fa-check-circle me-2"></i>Confirm Password
+                                </label>
+                                <input type="password" class="form-control form-control-lg" id="confirmPassword" 
+                                       placeholder="Re-enter your password" required>
+                                <div class="invalid-feedback" id="confirmPasswordError"></div>
+                            </div>
+                            
+                            <div class="d-flex justify-content-between">
+                                <button type="button" class="btn btn-outline-secondary" onclick="prevStep(1)">
+                                    <i class="fas fa-arrow-left me-2"></i>Back
+                                </button>
+                                <button type="button" class="btn btn-primary" onclick="nextStep(3)">
+                                    Next <i class="fas fa-arrow-right ms-2"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Step 3: Role & Terms -->
+                        <div class="step" id="step3" style="display: none;">
+                            <h5 class="mb-3">Step 3: Account Type</h5>
+                            
+                            <div class="mb-4">
+                                <label class="form-label">
+                                    <i class="fas fa-user-tag me-2"></i>I want to join as
+                                </label>
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <div class="card role-card text-center p-3" onclick="selectRole('student')" id="studentCard">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="role" 
+                                                       id="studentRole" value="student" checked>
+                                                <label class="form-check-label" for="studentRole">
+                                                    <i class="fas fa-graduation-cap fa-2x d-block mb-2 text-primary"></i>
+                                                    <strong>Student</strong>
+                                                    <p class="small text-muted mb-0">Seek anonymous support</p>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="card role-card text-center p-3" onclick="selectRole('counselor')" id="counselorCard">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="role" 
+                                                       id="counselorRole" value="counselor">
+                                                <label class="form-check-label" for="counselorRole">
+                                                    <i class="fas fa-user-md fa-2x d-block mb-2 text-success"></i>
+                                                    <strong>Counselor</strong>
+                                                    <p class="small text-muted mb-0">Provide support to students</p>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Counselor Code (hidden by default) -->
+                            <div class="mb-3" id="counselorCodeField" style="display: none;">
+                                <label for="counselorCode" class="form-label">
+                                    <i class="fas fa-key me-2"></i>Counselor Access Code
+                                </label>
+                                <input type="password" class="form-control" id="counselorCode" 
+                                       placeholder="Enter counselor access code">
+                                <small class="text-muted">Required for counselor registration</small>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="termsCheck" required>
+                                    <label class="form-check-label" for="termsCheck">
+                                        I agree to the <a href="#" data-bs-toggle="modal" data-bs-target="#termsModal">Terms of Service</a> and 
+                                        <a href="#" data-bs-toggle="modal" data-bs-target="#privacyModal">Privacy Policy</a>
+                                    </label>
+                                    <div class="invalid-feedback">You must agree to the terms</div>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="anonymousCheck" checked>
+                                    <label class="form-check-label" for="anonymousCheck">
+                                        I understand this is an anonymous platform
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <div class="d-flex justify-content-between">
+                                <button type="button" class="btn btn-outline-secondary" onclick="prevStep(2)">
+                                    <i class="fas fa-arrow-left me-2"></i>Back
+                                </button>
+                                <button type="submit" class="btn btn-success" id="signupBtn">
+                                    <i class="fas fa-user-plus me-2"></i>Create Account
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                    
+                    <hr class="my-4">
+                    
+                    <!-- Additional Links -->
+                    <div class="text-center">
+                        <p class="mb-2">Already have an account? 
+                            <a href="/login" class="text-primary">Login here</a>
+                        </p>
+                        <p class="small text-muted mb-0">
+                            <i class="fas fa-shield-alt me-1"></i>
+                            Your information is encrypted and protected
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Terms of Service Modal -->
+<div class="modal fade" id="termsModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title">Terms of Service</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <h6>1. Anonymous Nature</h6>
+                <p>This platform is designed to be anonymous. We do not collect personally identifiable information beyond what you provide voluntarily.</p>
+                
+                <h6>2. Confidentiality</h6>
+                <p>All conversations are confidential. However, if there is a risk of harm to yourself or others, we may need to break confidentiality to ensure safety.</p>
+                
+                <h6>3. Appropriate Use</h6>
+                <p>This platform is for seeking and providing support. Any abusive, harassing, or inappropriate behavior will result in account termination.</p>
+                
+                <h6>4. Emergency Situations</h6>
+                <p>This is not a crisis service. If you're in immediate danger, please call 911 or the National Suicide Prevention Lifeline at 988.</p>
+                
+                <h6>5. Data Storage</h6>
+                <p>Messages are stored to provide continuity of care. You can request deletion of your data at any time.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Privacy Policy Modal -->
+<div class="modal fade" id="privacyModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title">Privacy Policy</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <h6>Data Collection</h6>
+                <p>We collect only the information necessary to provide our services. This includes your username, email, and conversation history.</p>
+                
+                <h6>Data Usage</h6>
+                <p>Your data is used solely for providing counseling services and improving our platform. We never sell your data to third parties.</p>
+                
+                <h6>Data Protection</h6>
+                <p>All data is encrypted in transit and at rest. We use industry-standard security measures to protect your information.</p>
+                
+                <h6>Your Rights</h6>
+                <p>You have the right to access, correct, or delete your data. Contact us at privacy@counseling.edu for any requests.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.role-card {
+    cursor: pointer;
+    border: 2px solid #dee2e6;
+    transition: all 0.3s ease;
+}
+.role-card:hover {
+    border-color: #0d6efd;
+    background-color: #f8f9fa;
+}
+.role-card.selected {
+    border-color: #0d6efd;
+    background-color: #e7f1ff;
+}
+.password-requirements li.valid {
+    color: #198754 !important;
+}
+.password-requirements li.valid i {
+    color: #198754;
+}
+.password-requirements li i {
+    font-size: 0.8rem;
+}
+.step {
+    animation: fadeIn 0.5s ease;
+}
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+</style>
+
+<script>
+let currentStep = 1;
+
+// Real-time validation functions
+document.addEventListener('DOMContentLoaded', function() {
+    // Username validation with debounce
+    document.getElementById('username').addEventListener('input', debounce(validateUsername, 500));
+    
+    // Email validation
+    document.getElementById('email').addEventListener('input', validateEmail);
+    
+    // Password validation
+    document.getElementById('password').addEventListener('input', validatePassword);
+    document.getElementById('confirmPassword').addEventListener('input', validateConfirmPassword);
+    
+    // Role selection
+    document.querySelectorAll('input[name="role"]').forEach(radio => {
+        radio.addEventListener('change', toggleCounselorCode);
+    });
+});
+
+// Debounce function for API calls
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
+
+// Username validation with API check
+async function validateUsername() {
+    const username = document.getElementById('username');
+    const errorEl = document.getElementById('usernameError');
+    
+    if (!username.value) {
+        setInvalid(username, errorEl, 'Username is required');
+        return false;
+    }
+    
+    const pattern = /^[a-zA-Z0-9_]{3,20}$/;
+    if (!pattern.test(username.value)) {
+        setInvalid(username, errorEl, 'Username must be 3-20 characters and can only contain letters, numbers, and underscores');
+        return false;
+    }
+    
+    // Check availability via API
+    try {
+        const response = await fetch(`/api/auth/check-username?username=${encodeURIComponent(username.value)}`);
+        const data = await response.json();
+        
+        if (!data.available) {
+            setInvalid(username, errorEl, 'Username is already taken');
+            return false;
+        }
+        
+        setValid(username);
+        return true;
+    } catch (error) {
+        console.error('Username check error:', error);
+        // If API fails, still allow submission (will be caught on server)
+        setValid(username);
+        return true;
+    }
+}
+
+// Email validation
+function validateEmail() {
+    const email = document.getElementById('email');
+    const errorEl = document.getElementById('emailError');
+    
+    if (!email.value) {
+        setInvalid(email, errorEl, 'Email is required');
+        return false;
+    }
+    
+    const pattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!pattern.test(email.value)) {
+        setInvalid(email, errorEl, 'Please enter a valid email address');
+        return false;
+    }
+    
+    setValid(email);
+    return true;
+}
+
+// Password validation with strength meter
+function validatePassword() {
+    const password = document.getElementById('password');
+    const errorEl = document.getElementById('passwordError');
+    const strengthBar = document.getElementById('passwordStrength');
+    const strengthText = document.getElementById('passwordStrengthText');
+    
+    if (!password.value) {
+        setInvalid(password, errorEl, 'Password is required');
+        updatePasswordStrength(0, 'Enter password');
+        return false;
+    }
+    
+    // Check requirements
+    const requirements = {
+        length: password.value.length >= 8,
+        uppercase: /[A-Z]/.test(password.value),
+        lowercase: /[a-z]/.test(password.value),
+        number: /\d/.test(password.value),
+        special: /[@$!%*?&]/.test(password.value)
+    };
+    
+    // Update requirement indicators
+    updateRequirement('req-length', requirements.length);
+    updateRequirement('req-uppercase', requirements.uppercase);
+    updateRequirement('req-lowercase', requirements.lowercase);
+    updateRequirement('req-number', requirements.number);
+    updateRequirement('req-special', requirements.special);
+    
+    // Calculate strength
+    const strength = Object.values(requirements).filter(Boolean).length;
+    const strengthPercent = (strength / 5) * 100;
+    
+    let strengthLabel = 'Weak';
+    let color = 'danger';
+    
+    if (strength >= 4) {
+        strengthLabel = 'Strong';
+        color = 'success';
+    } else if (strength >= 3) {
+        strengthLabel = 'Medium';
+        color = 'warning';
+    }
+    
+    updatePasswordStrength(strengthPercent, `${strengthLabel} (${strength}/5 requirements)`);
+    strengthBar.className = `progress-bar bg-${color}`;
+    
+    // Check if all requirements met
+    const isValid = Object.values(requirements).every(Boolean);
+    
+    if (!isValid) {
+        setInvalid(password, errorEl, 'Password does not meet all requirements');
+        return false;
+    }
+    
+    setValid(password);
+    return true;
+}
+
+// Confirm password validation
+function validateConfirmPassword() {
+    const confirm = document.getElementById('confirmPassword');
+    const errorEl = document.getElementById('confirmPasswordError');
+    const password = document.getElementById('password').value;
+    
+    if (!confirm.value) {
+        setInvalid(confirm, errorEl, 'Please confirm your password');
+        return false;
+    }
+    
+    if (confirm.value !== password) {
+        setInvalid(confirm, errorEl, 'Passwords do not match');
+        return false;
+    }
+    
+    setValid(confirm);
+    return true;
+}
+
+// Helper functions for validation UI
+function setInvalid(element, errorEl, message) {
+    element.classList.add('is-invalid');
+    element.classList.remove('is-valid');
+    errorEl.textContent = message;
+    errorEl.style.display = 'block';
+}
+
+function setValid(element) {
+    element.classList.remove('is-invalid');
+    element.classList.add('is-valid');
+    const errorEl = document.getElementById(element.id + 'Error');
+    if (errorEl) errorEl.style.display = 'none';
+}
+
+function updateRequirement(elementId, isValid) {
+    const element = document.getElementById(elementId);
+    if (isValid) {
+        element.className = 'valid';
+        element.innerHTML = '<i class="fas fa-check-circle me-1"></i> ' + element.textContent.replace('○', '');
+    } else {
+        element.className = 'text-muted';
+        element.innerHTML = '<i class="fas fa-circle me-1"></i> ' + element.textContent.split(' ').slice(1).join(' ');
+    }
+}
+
+function updatePasswordStrength(percent, text) {
+    document.getElementById('passwordStrength').style.width = percent + '%';
+    document.getElementById('passwordStrengthText').textContent = text;
+}
+
+// Role selection
+function selectRole(role) {
+    document.getElementById(role + 'Role').checked = true;
+    toggleCounselorCode();
+    
+    // Update card styles
+    document.getElementById('studentCard').classList.toggle('selected', role === 'student');
+    document.getElementById('counselorCard').classList.toggle('selected', role === 'counselor');
+}
+
+function toggleCounselorCode() {
+    const isCounselor = document.getElementById('counselorRole').checked;
+    document.getElementById('counselorCodeField').style.display = isCounselor ? 'block' : 'none';
+}
+
+// Step navigation
+function nextStep(step) {
+    // Validate current step before proceeding
+    if (currentStep === 1 && !validateStep1()) return;
+    if (currentStep === 2 && !validateStep2()) return;
+    
+    document.getElementById(`step${currentStep}`).style.display = 'none';
+    document.getElementById(`step${step}`).style.display = 'block';
+    currentStep = step;
+    
+    // Update progress bar
+    const progress = (step / 3) * 100;
+    document.getElementById('signupProgress').style.width = progress + '%';
+}
+
+function prevStep(step) {
+    document.getElementById(`step${currentStep}`).style.display = 'none';
+    document.getElementById(`step${step}`).style.display = 'block';
+    currentStep = step;
+    
+    // Update progress bar
+    const progress = (step / 3) * 100;
+    document.getElementById('signupProgress').style.width = progress + '%';
+}
+
+function validateStep1() {
+    const isValidUsername = validateUsername();
+    const isValidEmail = validateEmail();
+    
+    return isValidUsername && isValidEmail;
+}
+
+function validateStep2() {
+    const isValidPassword = validatePassword();
+    const isValidConfirm = validateConfirmPassword();
+    
+    return isValidPassword && isValidConfirm;
+}
+
+// Form submission
+document.getElementById('signupForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    // Validate all steps
+    if (!validateStep1() || !validateStep2()) {
+        showAlert('danger', 'Please fix all errors before submitting');
+        return;
+    }
+    
+    // Validate terms
+    if (!document.getElementById('termsCheck').checked) {
+        showAlert('warning', 'You must agree to the Terms of Service');
+        return;
+    }
+    
+    // Validate counselor code if needed
+    const isCounselor = document.getElementById('counselorRole').checked;
+    const counselorCode = document.getElementById('counselorCode').value;
+    
+    
+    const signupBtn = document.getElementById('signupBtn');
+    signupBtn.disabled = true;
+    signupBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Creating Account...';
+    
+
+  const userData = {
+  username: document.getElementById('username').value,
+  email: document.getElementById('email').value,
+  password: document.getElementById('password').value,
+  role: document.querySelector('input[name="role"]:checked').value,
+  firstName: document.getElementById('firstName').value,
+  lastName: document.getElementById('lastName').value,
+  accessCode: document.getElementById('counselorCode').value
+};
+    
+    try {
+        const response = await fetch('/api/auth/register', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            credentials: 'same-origin',
+            body: JSON.stringify(userData)
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            showAlert('success', 'Account created successfully! Redirecting to login...');
+            
+            // Redirect to login after 2 seconds
+            setTimeout(() => {
+                window.location.href = '/login';
+            }, 2000);
+        } else {
+            showAlert('danger', data.message || 'Registration failed');
+            signupBtn.disabled = false;
+            signupBtn.innerHTML = '<i class="fas fa-user-plus me-2"></i>Create Account';
+        }
+    } catch (error) {
+        console.error('Signup error:', error);
+        showAlert('danger', 'An error occurred. Please try again.');
+        signupBtn.disabled = false;
+        signupBtn.innerHTML = '<i class="fas fa-user-plus me-2"></i>Create Account';
+    }
+});
+
+function showAlert(type, message) {
+    const alert = document.getElementById('alertMessage');
+    alert.className = `alert alert-${type}`;
+    alert.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'} me-2"></i>${message}`;
+    alert.classList.remove('d-none');
+    
+    // Auto hide after 5 seconds
+    setTimeout(() => {
+        alert.classList.add('d-none');
+    }, 5000);
+}
+
+// Enter key handling
+document.addEventListener('keypress', function(e) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+        const activeElement = document.activeElement;
+        if (activeElement.tagName === 'INPUT' || activeElement.tagName === 'TEXTAREA') {
+            e.preventDefault();
+            
+            if (currentStep === 3) {
+                document.getElementById('signupForm').dispatchEvent(new Event('submit'));
+            } else {
+                nextStep(currentStep + 1);
+            }
+        }
+    }
+});
+</script>
+
+<%- include('partials/footer') %>
