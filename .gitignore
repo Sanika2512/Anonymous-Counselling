@@ -1,4 +1,5 @@
 .env
 .env.*
 node_modules/
-addCodes.js
+addCodes..js
+client\public\uploads\images
