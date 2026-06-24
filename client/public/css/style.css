@@ -1,0 +1,279 @@
+/* Responsive foundation loaded by every page. */
+:root {
+  --app-safe-x: clamp(12px, 3vw, 32px);
+  --tap-target: 44px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  width: 100%;
+  overflow-x: hidden;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  width: 100%;
+  min-width: 0;
+  overflow-x: hidden;
+}
+
+main {
+  min-width: 0;
+}
+
+img,
+video,
+canvas,
+svg {
+  max-width: 100%;
+  height: auto;
+}
+
+audio {
+  max-width: 100%;
+}
+
+iframe,
+embed,
+object {
+  max-width: 100%;
+}
+
+button,
+.btn,
+input,
+select,
+textarea,
+[role="button"] {
+  min-height: var(--tap-target);
+}
+
+input,
+select,
+textarea {
+  max-width: 100%;
+}
+
+textarea {
+  resize: vertical;
+}
+
+.container,
+.container-fluid {
+  min-width: 0;
+}
+
+.row {
+  min-width: 0;
+}
+
+.card,
+.modal-content,
+.dropdown-menu,
+.toast,
+.alert,
+.panel,
+.message-bubble {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.table-responsive,
+.table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+table {
+  max-width: 100%;
+}
+
+.modal-dialog {
+  width: min(100% - 24px, var(--bs-modal-width, 500px));
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.modal-body {
+  max-height: min(72vh, 720px);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.navbar .container {
+  min-width: 0;
+}
+
+.navbar-brand {
+  min-width: 0;
+  max-width: min(72vw, 420px);
+}
+
+.navbar-brand > div,
+.navbar-brand span,
+.navbar-brand small {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.navbar-collapse {
+  min-width: 0;
+}
+
+.navbar-nav {
+  gap: 4px;
+}
+
+.dropdown-menu {
+  max-width: calc(100vw - 24px);
+}
+
+.message-status {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 4px;
+  font-size: 0.72rem;
+  color: #667781;
+  white-space: nowrap;
+}
+
+.message-status.seen {
+  color: #34b7f1;
+}
+
+.msg-menu-btn,
+.chat-conv-menu-btn,
+.conv-menu-btn {
+  min-width: var(--tap-target);
+  min-height: var(--tap-target);
+  touch-action: manipulation;
+}
+
+#msgContextMenu,
+.message-dropdown,
+.chat-header-dropdown {
+  max-width: calc(100vw - 24px);
+}
+
+.toast-stack,
+.toast-notification {
+  max-width: calc(100vw - 24px);
+}
+
+@media (max-width: 991.98px) {
+  .navbar .container {
+    max-width: 100%;
+    padding-left: var(--app-safe-x);
+    padding-right: var(--app-safe-x);
+  }
+
+  .navbar-nav {
+    align-items: stretch !important;
+    padding-top: 10px;
+  }
+
+  .navbar .nav-link,
+  .navbar .btn {
+    width: 100%;
+    min-height: var(--tap-target);
+    display: flex;
+    align-items: center;
+    border-radius: 10px;
+  }
+
+  .navbar .dropdown-menu {
+    position: static;
+    width: 100%;
+    border: 0;
+    box-shadow: none;
+    margin-top: 4px;
+  }
+
+  footer .row {
+    gap: 18px;
+  }
+}
+
+@media (max-width: 767.98px) {
+  body {
+    font-size: 15px;
+  }
+
+  h1 {
+    font-size: clamp(1.75rem, 8vw, 2.5rem);
+  }
+
+  h2 {
+    font-size: clamp(1.4rem, 6vw, 2rem);
+  }
+
+  h3 {
+    font-size: clamp(1.15rem, 5vw, 1.5rem);
+  }
+
+  .container,
+  .container-fluid {
+    padding-left: var(--app-safe-x);
+    padding-right: var(--app-safe-x);
+  }
+
+  .btn,
+  button,
+  input,
+  select,
+  textarea {
+    font-size: 16px;
+  }
+
+  .modal-dialog {
+    width: calc(100% - 16px);
+    margin-top: 8px;
+    margin-bottom: 8px;
+  }
+
+  .modal-content {
+    border-radius: 14px !important;
+  }
+
+  .modal-header,
+  .modal-footer {
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .modal-footer > * {
+    flex: 1 1 auto;
+  }
+}
+
+@media (max-width: 575.98px) {
+  :root {
+    --tap-target: 46px;
+  }
+
+  .navbar-brand {
+    max-width: calc(100vw - 96px);
+  }
+
+  .navbar-brand .fa-2x {
+    font-size: 1.45rem;
+  }
+
+  footer {
+    text-align: center;
+  }
+}
+
+@media (orientation: landscape) and (max-height: 520px) {
+  .modal-body {
+    max-height: 62vh;
+  }
+}

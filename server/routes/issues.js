@@ -9,7 +9,13 @@ router.post("/create", auth.isStudent, issueController.createIssue);
 // Get issues of logged-in student
 router.get("/my", auth.isStudent, issueController.getMyIssues);
 
+// Dashboard stats for counselor
+router.get("/stats", auth.isCounselor, issueController.getStats);
+
 // Assign counselor to issue (ONLY counselor)
 router.post("/assign", auth.isCounselor, issueController.assignCounselor);
+
+// Update issue status/details
+router.put("/:issueId", auth.isCounselor, issueController.updateIssue);
 
 module.exports = router;

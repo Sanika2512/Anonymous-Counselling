@@ -11,21 +11,18 @@ const ratingSchema = new mongoose.Schema({
         ref: "User",
         required: true
     },
-    // In your User model, add these fields:
-rating: {
-    type: Number,
-    default: 0,
-    min: 0,
-    max: 5
-},
-totalRatings: {
-    type: Number,
-    default: 0
-},
-sumRatings: {
-    type: Number,
-    default: 0
-},
+    rating: {
+        type: Number,
+        required: true,
+        min: 1,
+        max: 5
+    },
+    feedback: {
+        type: String,
+        trim: true,
+        maxlength: 1000,
+        default: ""
+    },
     // For homepage website review
     websiteReview: {
         type: Boolean,

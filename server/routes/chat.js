@@ -1,10 +1,15 @@
 const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
+const multer = require("multer");
+const path = require("path");
+const fs = require("fs");
 
 const Chat = require("../models/Chat");
 const User = require("../models/User");
+const Rating = require("../models/Rating");
 const { isLoggedIn } = require("../middleware/auth");
+const { buildRecommendations } = require("../services/recommendationService");
 
 // ✅ Gemini setup — FREE alternative to OpenAI
 const { GoogleGenerativeAI } = require("@google/generative-ai");
@@ -20,6 +25,187 @@ Your role is to:
 - If someone seems in immediate danger, always direct them to emergency services or a crisis helpline
 - Never diagnose medical conditions or replace a licensed professional
 - Never reveal or store any personal information`;
+
+async function buildRatingPrompt(chat, studentId) {
+    if (!chat || chat.student.toString() !== studentId.toString()) return null;
+
+    const exchangedCount = (chat.messages || []).filter(msg =>
+        ["student", "counselor"].includes(msg.sender) && !msg.deletedForAll
+    ).length;
+
+    if (exchangedCount < 10) return null;
+
+    const existingRating = await Rating.findOne({
+        student: studentId,
+        counselor: chat.counselor,
+        websiteReview: false
+    }).select("_id");
+
+    if (existingRating) return null;
+
+    return {
+        shouldPrompt: true,
+        counselorId: chat.counselor.toString(),
+        messageCount: exchangedCount
+    };
+}
+
+const voiceUploadDir = path.join(__dirname, "../../client/public/uploads/voice");
+if (!fs.existsSync(voiceUploadDir)) {
+    fs.mkdirSync(voiceUploadDir, { recursive: true });
+}
+
+const DELETE_FOR_EVERYONE_WINDOW_MS = 24 * 60 * 60 * 1000;
+
+function mimeToExtension(mimeType) {
+    const cleanType = String(mimeType || "").split(";")[0].toLowerCase();
+    const map = {
+        "audio/webm": ".webm",
+        "audio/mp4": ".m4a",
+        "audio/x-m4a": ".m4a",
+        "audio/aac": ".aac",
+        "audio/ogg": ".ogg",
+        "audio/mpeg": ".mp3",
+        "audio/mp3": ".mp3",
+        "audio/wav": ".wav",
+        "audio/x-wav": ".wav",
+        "audio/vnd.wave": ".wav"
+    };
+    return map[cleanType] || ".webm";
+}
+
+const voiceUpload = multer({
+    storage: multer.diskStorage({
+        destination: (req, file, cb) => cb(null, voiceUploadDir),
+        filename: (req, file, cb) => {
+            const ext = path.extname(file.originalname || "").toLowerCase() || mimeToExtension(file.mimetype);
+            cb(null, `voice-${Date.now()}-${Math.round(Math.random() * 1e9)}${ext}`);
+        }
+    }),
+    limits: { fileSize: 8 * 1024 * 1024 },
+    fileFilter: (req, file, cb) => {
+        const cleanType = String(file.mimetype || "").split(";")[0].toLowerCase();
+        const allowed = [
+            "audio/webm",
+            "audio/mp4",
+            "audio/x-m4a",
+            "audio/aac",
+            "audio/ogg",
+            "audio/mpeg",
+            "audio/mp3",
+            "audio/wav",
+            "audio/x-wav",
+            "audio/vnd.wave"
+        ];
+        if (allowed.includes(cleanType) || cleanType.startsWith("audio/")) return cb(null, true);
+        cb(new Error("Unsupported audio format. Please record again and try sending."));
+    }
+});
+
+function removeUploadedFile(file) {
+    if (file?.path) fs.unlink(file.path, () => {});
+}
+
+function removeVoiceFileByMessage(message) {
+    const filename = message?.voice?.filename;
+    if (!filename) return;
+    const resolvedPath = path.resolve(voiceUploadDir, path.basename(filename));
+    if (!resolvedPath.startsWith(path.resolve(voiceUploadDir))) return;
+    fs.unlink(resolvedPath, () => {});
+}
+
+function toId(value) {
+    return value?._id ? value._id.toString() : value?.toString?.();
+}
+
+function idListIncludes(list, userId) {
+    return Array.isArray(list) && list.some(id => toId(id) === userId.toString());
+}
+
+function getMessageType(message) {
+    return message?.messageType || (message?.voice?.url ? "voice" : "text");
+}
+
+function formatDuration(seconds) {
+    const total = Math.max(0, Math.floor(Number(seconds) || 0));
+    return `${Math.floor(total / 60)}:${String(total % 60).padStart(2, "0")}`;
+}
+
+function getReplyPreview(message) {
+    const messageType = getMessageType(message);
+    if (message?.deletedForAll) {
+        return {
+            messageId: message._id,
+            messageType,
+            text: messageType === "voice" ? "Deleted Voice Message" : "Deleted Message",
+            duration: message?.voice?.duration || 0,
+            deletedForAll: true
+        };
+    }
+
+    if (messageType === "voice") {
+        const duration = Number(message?.voice?.duration || 0);
+        return {
+            messageId: message._id,
+            messageType: "voice",
+            text: `Voice Message (${formatDuration(duration)})`,
+            duration,
+            deletedForAll: false
+        };
+    }
+
+    return {
+        messageId: message._id,
+        messageType: "text",
+        text: (message?.text || "Message").substring(0, 100),
+        duration: 0,
+        deletedForAll: false
+    };
+}
+
+function serializeMessage(message, chatId) {
+    const obj = message?.toObject ? message.toObject() : message;
+    const seenBy = obj.seenBy?.length ? obj.seenBy : (obj.readBy || []);
+    return {
+        _id: obj._id,
+        sender: obj.sender,
+        senderId: obj.senderId,
+        text: obj.text || "",
+        messageType: getMessageType(obj),
+        voice: obj.deletedForAll ? null : (obj.voice || null),
+        timestamp: obj.timestamp,
+        chatId,
+        replyTo: obj.replyTo || null,
+        edited: !!obj.edited,
+        deletedForAll: !!obj.deletedForAll,
+        deletedAt: obj.deletedAt || null,
+        deletedFor: obj.deletedFor || [],
+        deliveredTo: obj.deliveredTo || [],
+        seenBy,
+        readBy: obj.readBy || seenBy
+    };
+}
+
+function getVisibleMessages(chat, userId) {
+    const viewerId = userId.toString();
+    return (chat.messages || [])
+        .filter(msg => !idListIncludes(msg.deletedFor, viewerId))
+        .map(msg => serializeMessage(msg, chat._id.toString()));
+}
+
+function getLastVisibleMessage(chat, userId) {
+    const viewerId = userId.toString();
+    return [...(chat.messages || [])]
+        .reverse()
+        .find(msg => !msg.deletedForAll && !idListIncludes(msg.deletedFor, viewerId));
+}
+
+function getMessagePreviewText(message) {
+    if (!message) return "No messages yet";
+    if (message.deletedForAll) return "No messages yet";
+    if (getMessageType(message) === "voice") return "Voice message";
+    return message.text || "Message";
+}
 
 // ✅ Defined ONCE at the top
 function getDeterministicAnonymousId(studentId) {
@@ -189,13 +375,11 @@ router.get("/", isLoggedIn, async (req, res) => {
             .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
 
         const formattedChats = dedupedChats.map(chat => {
-            const lastMessage = chat.messages.length > 0
-                ? chat.messages[chat.messages.length - 1]
-                : { text: "No messages yet", timestamp: chat.createdAt };
+            const lastMessage = getLastVisibleMessage(chat, req.user._id) || { text: "No messages yet", timestamp: chat.createdAt };
             return {
                 _id: chat._id,
                 anonymousId: getDeterministicAnonymousId(chat.student),
-                lastMessage: lastMessage.text,
+                lastMessage: getMessagePreviewText(lastMessage),
                 lastMessageTime: lastMessage.timestamp,
                 status: chat.status,
                 unreadCount: req.user.role === "counselor"
@@ -242,16 +426,19 @@ router.get("/:chatId", isLoggedIn, async (req, res) => {
             return res.status(403).json({ success: false, message: "Unauthorized" });
         }
 
+        const ratingPrompt = await buildRatingPrompt(chat, chat.student);
+
         return res.json({
             success: true,
             chat: {
                 _id: chat._id,
                 studentAnonymousId: getDeterministicAnonymousId(chat.student),
-                messages: chat.messages || [],
+                messages: getVisibleMessages(chat, req.user._id),
                 status: chat.status,
                 counselor: chat.counselor,
                 createdAt: chat.createdAt
-            }
+            },
+            ratingPrompt
         });
 
     } catch (err) {
@@ -261,12 +448,14 @@ router.get("/:chatId", isLoggedIn, async (req, res) => {
 });
 
 /* SEND MESSAGE — POST /api/chat/:chatId/message */
-router.post("/:chatId/message", isLoggedIn, async (req, res) => {
+router.post("/:chatId/message", isLoggedIn, voiceUpload.single("voice"), async (req, res) => {
     try {
         const { text } = req.body;
         const chatId = req.params.chatId;
+        const isVoiceMessage = !!req.file;
+        const cleanText = typeof text === "string" ? text.trim() : "";
 
-        if (!text || text.trim() === "") {
+        if (!isVoiceMessage && !cleanText) {
             return res.status(400).json({ success: false, message: "Message cannot be empty" });
         }
 
@@ -276,38 +465,52 @@ router.post("/:chatId/message", isLoggedIn, async (req, res) => {
         const isStudent  = chat.student.toString()  === req.user._id.toString();
         const isCounselor = chat.counselor.toString() === req.user._id.toString();
         if (!isStudent && !isCounselor) {
+            removeUploadedFile(req.file);
             return res.status(403).json({ success: false, message: "Unauthorized" });
         }
 
         if (chat.status !== "active") {
+            removeUploadedFile(req.file);
             return res.status(400).json({ success: false, message: "This chat is closed" });
         }
 
         const senderRole = req.user.role;
+        const recipientId = senderRole === "student" ? chat.counselor : chat.student;
         const message = {
             _id: new mongoose.Types.ObjectId(),
             sender: senderRole,
             senderId: req.user._id,
-            text: text.trim(),
+            text: isVoiceMessage ? "" : cleanText,
+            messageType: isVoiceMessage ? "voice" : "text",
             timestamp: new Date(),
             readBy: [req.user._id],
+            seenBy: [req.user._id],
+            deliveredTo: [req.user._id, recipientId],
             edited: false,
             deletedForAll: false,
             deletedFor: []
         };
 
+        if (isVoiceMessage) {
+            message.voice = {
+                url: `/uploads/voice/${req.file.filename}`,
+                filename: req.file.filename,
+                mimeType: req.file.mimetype,
+                size: req.file.size,
+                duration: Number(req.body.duration || 0)
+            };
+        }
+
         if (req.body.replyTo) {
             const parentMsg = chat.messages.id(req.body.replyTo);
             if (parentMsg) {
-                message.replyTo = {
-                    messageId: parentMsg._id,
-                    text: parentMsg.text?.substring(0, 100) || ''
-                };
+                message.replyTo = getReplyPreview(parentMsg);
             }
         }
 
         chat.messages.push(message);
-        chat.lastMessage = { text: text.trim(), timestamp: message.timestamp, sender: senderRole };
+        const lastMessageText = isVoiceMessage ? "Voice message" : cleanText;
+        chat.lastMessage = { text: lastMessageText, timestamp: message.timestamp, sender: senderRole };
 
         if (!chat.unreadCount) chat.unreadCount = { student: 0, counselor: 0 };
         if (senderRole === "student") {
@@ -319,22 +522,32 @@ router.post("/:chatId/message", isLoggedIn, async (req, res) => {
         }
 
         await chat.save();
+        const ratingPrompt = await buildRatingPrompt(chat, req.user._id);
 
 const io = req.app.get("io");
 if (io) {
-    const messagePayload = {
-        _id: message._id,
-        sender: senderRole,
-        senderId: req.user._id,
-        text: text.trim(),
-        timestamp: message.timestamp,
-        chatId: chatId,
-        replyTo: message.replyTo || null,
-        edited: false
-    };
+    const messagePayload = serializeMessage(message, chatId);
 
     
     io.to(chatId.toString()).emit("newMessage", messagePayload);
+    if (isVoiceMessage) {
+        io.to(chatId.toString()).emit("voice_message_sent", messagePayload);
+        io.to(chatId.toString()).emit("voice_message_delivered", {
+            chatId: chatId.toString(),
+            messageId: message._id.toString(),
+            deliveredTo: recipientId.toString()
+        });
+        if (message.replyTo) {
+            io.to(chatId.toString()).emit("voice_message_reply_created", messagePayload);
+        }
+    }
+
+    if (ratingPrompt) {
+        io.to(chat.student.toString()).emit("ratingPrompt", {
+            ...ratingPrompt,
+            chatId: chatId.toString()
+        });
+    }
 
     const otherUserId = senderRole === "student"
         ? chat.counselor.toString()
@@ -342,32 +555,45 @@ if (io) {
 
     
    
-    io.to(otherUserId).emit("newMessage", messagePayload);
-
-    
     io.to(otherUserId).emit("conversationUpdated", {
         chatId: chatId,
-        lastMessage: text.trim(),
+        lastMessage: lastMessageText,
         timestamp: message.timestamp,
         unreadCount: senderRole === "student"
             ? chat.unreadCount.counselor
             : chat.unreadCount.student
     });
     io.to(otherUserId).emit("refreshConversations");
+
+    const recommendationPayload = buildRecommendations(
+        chat.messages
+            .filter(msg => msg.messageType !== "voice" && msg.text && !msg.deletedForAll)
+            .slice(-12)
+            .map(msg => msg.text),
+        { limit: 4 }
+    );
+
+    io.to(chatId.toString()).emit("recommendations-refresh", {
+        source: "chat",
+        chatId,
+        recommendations: recommendationPayload
+    });
+    io.to(chat.student.toString()).emit("recommendations-refresh", {
+        source: "chat",
+        chatId,
+        recommendations: recommendationPayload
+    });
 }
   res.json({
             success: true,
-            message: {
-                _id: message._id,
-                sender: senderRole,
-                text: text.trim(),
-                timestamp: message.timestamp
-            }
+            ratingPrompt,
+            message: serializeMessage(message, chatId)
         });
 
     } catch (err) {
         console.error("Send message error:", err);
-        res.status(500).json({ success: false, message: "Error sending message" });
+        removeUploadedFile(req.file);
+        res.status(500).json({ success: false, message: err.message || "Error sending message" });
     }
 });
 
@@ -377,19 +603,80 @@ router.post("/:chatId/read", isLoggedIn, async (req, res) => {
         const chat = await Chat.findById(req.params.chatId);
         if (!chat) return res.status(404).json({ success: false, message: "Chat not found" });
 
-        if (req.user.role === "counselor") {
-            chat.unreadCount.counselor = 0;
-        } else {
-            chat.unreadCount.student = 0;
+        const requestUserId = req.user._id.toString();
+        const studentId = chat.student.toString();
+        const counselorId = chat.counselor.toString();
+        const isStudent = studentId === requestUserId;
+        const isCounselor = counselorId === requestUserId;
+
+        if (!isStudent && !isCounselor) {
+            return res.status(403).json({ success: false, message: "Unauthorized" });
         }
 
-        chat.messages.forEach(msg => {
+        if (!chat.unreadCount) {
+            chat.unreadCount = { student: 0, counselor: 0 };
+        }
+
+        const readerRole = isCounselor ? "counselor" : "student";
+        chat.unreadCount[readerRole] = 0;
+
+        let markedMessages = 0;
+        const seenMessages = [];
+        for (const msg of chat.messages) {
+            if (msg.sender === readerRole) continue;
             if (!msg.readBy) msg.readBy = [];
-            if (!msg.readBy.includes(req.user._id)) msg.readBy.push(req.user._id);
-        });
+            if (!msg.seenBy) msg.seenBy = [];
+            if (!msg.deliveredTo) msg.deliveredTo = [];
+
+            if (!idListIncludes(msg.deliveredTo, requestUserId)) {
+                msg.deliveredTo.push(req.user._id);
+            }
+
+            const alreadyRead = msg.readBy.some(id => id.toString() === requestUserId);
+            if (!alreadyRead) {
+                msg.readBy.push(req.user._id);
+                if (!idListIncludes(msg.seenBy, requestUserId)) msg.seenBy.push(req.user._id);
+                markedMessages += 1;
+                seenMessages.push(msg);
+            }
+        }
 
         await chat.save();
-        res.json({ success: true, message: "Messages marked as read" });
+
+        const io = req.app.get("io");
+        if (io) {
+            const payload = {
+                chatId: req.params.chatId,
+                readerId: requestUserId,
+                readerRole,
+                unreadCount: 0
+            };
+
+            io.to(requestUserId).emit("conversationRead", payload);
+            io.to(req.params.chatId).emit("conversationRead", payload);
+            io.to(req.params.chatId).emit("messageStatusUpdated", {
+                ...payload,
+                messageIds: seenMessages.map(msg => msg._id.toString()),
+                status: "seen"
+            });
+            seenMessages
+                .filter(msg => getMessageType(msg) === "voice")
+                .forEach(msg => {
+                    io.to(req.params.chatId).emit("voice_message_seen", {
+                        ...payload,
+                        messageId: msg._id.toString(),
+                        seenBy: requestUserId
+                    });
+                });
+            io.to(requestUserId).emit("refreshConversations");
+        }
+
+        res.json({
+            success: true,
+            message: "Messages marked as read",
+            unreadCount: 0,
+            markedMessages
+        });
 
     } catch (err) {
         console.error("Mark read error:", err);
@@ -409,6 +696,9 @@ router.put("/:chatId/message/:messageId", isLoggedIn, async (req, res) => {
 
         if (msg.senderId?.toString() !== req.user._id.toString()) {
             return res.status(403).json({ success: false, message: "Can only edit your own messages" });
+        }
+        if (getMessageType(msg) === "voice") {
+            return res.status(400).json({ success: false, message: "Voice messages cannot be edited" });
         }
 
         msg.text = text.trim();
@@ -437,19 +727,48 @@ router.delete("/:chatId/message/:messageId", isLoggedIn, async (req, res) => {
         const chat = await Chat.findById(req.params.chatId);
         if (!chat) return res.status(404).json({ success: false, message: "Chat not found" });
 
+        const requestUserId = req.user._id.toString();
+        const isParticipant =
+            chat.student.toString() === requestUserId ||
+            chat.counselor.toString() === requestUserId;
+        if (!isParticipant) return res.status(403).json({ success: false, message: "Unauthorized" });
+
         const msgIndex = chat.messages.findIndex(m => m._id.toString() === req.params.messageId);
         if (msgIndex === -1) return res.status(404).json({ success: false, message: "Message not found" });
 
         const msg = chat.messages[msgIndex];
+        const messageType = getMessageType(msg);
         if (deleteFor === "all") {
             if (msg.senderId?.toString() !== req.user._id.toString()) {
                 return res.status(403).json({ success: false, message: "Can only delete your own messages for all" });
             }
+            const createdAt = new Date(msg.timestamp || chat.createdAt || Date.now()).getTime();
+            if (Date.now() - createdAt > DELETE_FOR_EVERYONE_WINDOW_MS) {
+                return res.status(403).json({ success: false, message: "Delete for everyone time window has expired" });
+            }
+            if (messageType === "voice") {
+                removeVoiceFileByMessage(msg);
+                msg.voice = {
+                    ...(msg.voice?.toObject ? msg.voice.toObject() : msg.voice || {}),
+                    url: "",
+                    filename: "",
+                    deleted: true
+                };
+            }
             msg.deletedForAll = true;
-            msg.text = "This message was deleted";
+            msg.deletedAt = new Date();
+            msg.text = messageType === "voice" ? "This voice message was deleted" : "This message was deleted";
+
+            chat.messages.forEach(child => {
+                if (child.replyTo?.messageId?.toString?.() === msg._id.toString()) {
+                    child.replyTo.deletedForAll = true;
+                    child.replyTo.text = messageType === "voice" ? "Deleted Voice Message" : "Deleted Message";
+                    child.replyTo.duration = messageType === "voice" ? Number(msg.voice?.duration || child.replyTo.duration || 0) : 0;
+                }
+            });
         } else {
             if (!msg.deletedFor) msg.deletedFor = [];
-            if (!msg.deletedFor.map(String).includes(req.user._id.toString())) {
+            if (!msg.deletedFor.map(String).includes(requestUserId)) {
                 msg.deletedFor.push(req.user._id);
             }
         }
@@ -457,14 +776,38 @@ router.delete("/:chatId/message/:messageId", isLoggedIn, async (req, res) => {
         await chat.save();
 
         const io = req.app.get("io");
-        if (io && deleteFor === "all") {
-            io.to(req.params.chatId).emit("messageDeleted", {
-                chatId: req.params.chatId,
-                messageId: req.params.messageId
-            });
+        if (io) {
+            if (deleteFor === "all") {
+                const payload = {
+                    chatId: req.params.chatId,
+                    messageId: req.params.messageId,
+                    messageType,
+                    deletedBy: requestUserId,
+                    replacementForSender: messageType === "voice" ? "You deleted this voice message" : "You deleted this message",
+                    replacementForReceiver: messageType === "voice" ? "This voice message was deleted" : "This message was deleted",
+                    replyReplacement: messageType === "voice" ? "Deleted Voice Message" : "Deleted Message"
+                };
+                io.to(req.params.chatId).emit("messageDeleted", payload);
+                if (messageType === "voice") {
+                    io.to(req.params.chatId).emit("voice_message_deleted_for_everyone", payload);
+                }
+                io.to(req.params.chatId).emit("refreshConversations");
+            } else {
+                const payload = {
+                    chatId: req.params.chatId,
+                    messageId: req.params.messageId,
+                    messageType,
+                    deletedFor: requestUserId
+                };
+                io.to(requestUserId).emit("messageDeletedForMe", payload);
+                if (messageType === "voice") {
+                    io.to(requestUserId).emit("voice_message_deleted_for_me", payload);
+                }
+                io.to(requestUserId).emit("refreshConversations");
+            }
         }
 
-        return res.json({ success: true });
+        return res.json({ success: true, messageType });
     } catch (err) {
         return res.status(500).json({ success: false, message: err.message });
     }
@@ -532,6 +875,19 @@ router.delete("/:chatId", isLoggedIn, async (req, res) => {
     } catch (err) {
         return res.status(500).json({ success: false, message: err.message });
     }
+});
+
+router.use((err, req, res, next) => {
+    if (res.headersSent) return next(err);
+
+    console.error("Chat route error:", err);
+    removeUploadedFile(req.file);
+
+    const isUploadError = err instanceof multer.MulterError || /audio|upload|file/i.test(err.message || "");
+    res.status(isUploadError ? 400 : 500).json({
+        success: false,
+        message: err.message || "Error processing chat request"
+    });
 });
 
 module.exports = router;

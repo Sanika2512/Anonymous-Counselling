@@ -1,0 +1,407 @@
+<%- include('partials/header') %>
+
+<style>
+  :root {
+    --admin-bg: #f6f8fb;
+    --admin-panel: #ffffff;
+    --admin-ink: #172033;
+    --admin-muted: #667085;
+    --admin-line: #d9e2ef;
+    --admin-blue: #2563eb;
+    --admin-green: #047857;
+    --admin-amber: #b45309;
+    --admin-red: #dc2626;
+    --admin-slate: #334155;
+  }
+  body { background: var(--admin-bg); }
+  .admin-shell { min-height: calc(100vh - 80px); }
+  .admin-wrap { max-width: 1480px; margin: 0 auto; padding: 24px; }
+  .admin-top { display: flex; align-items: center; justify-content: space-between; gap: 18px; margin-bottom: 18px; }
+  .admin-top h1 { margin: 0; color: var(--admin-ink); font-size: 1.8rem; font-weight: 800; letter-spacing: 0; }
+  .admin-top p { margin: 4px 0 0; color: var(--admin-muted); }
+  .privacy-badge { display: inline-flex; align-items: center; gap: 8px; padding: 8px 11px; border-radius: 8px; background: #ecfdf5; color: #047857; border: 1px solid #bbf7d0; font-weight: 800; font-size: .82rem; }
+  .admin-grid { display: grid; grid-template-columns: 248px minmax(0, 1fr); gap: 16px; }
+  .sidebar, .panel, .stat { background: var(--admin-panel); border: 1px solid var(--admin-line); border-radius: 8px; box-shadow: 0 14px 34px rgba(15, 23, 42, .06); }
+  .sidebar { padding: 10px; height: max-content; position: sticky; top: 82px; }
+  .nav-label { padding: 12px 10px 6px; color: var(--admin-muted); font-size: .72rem; font-weight: 800; text-transform: uppercase; letter-spacing: .08em; }
+  .nav-btn { width: 100%; border: 0; background: transparent; color: var(--admin-slate); display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 8px; text-align: left; font-weight: 750; }
+  .nav-btn:hover { background: #eef4ff; color: var(--admin-blue); }
+  .nav-btn.active { background: var(--admin-blue); color: #fff; }
+  .stat-grid { display: grid; grid-template-columns: repeat(4, minmax(150px, 1fr)); gap: 12px; margin-bottom: 16px; }
+  .stat { padding: 16px; }
+  .stat span { color: var(--admin-muted); font-size: .8rem; font-weight: 800; }
+  .stat strong { display: block; color: var(--admin-ink); font-size: 1.7rem; line-height: 1.2; }
+  .panel { margin-bottom: 16px; overflow: hidden; }
+  .panel-head { padding: 14px 16px; border-bottom: 1px solid var(--admin-line); display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+  .panel-title { margin: 0; color: var(--admin-ink); font-size: 1rem; font-weight: 850; }
+  .panel-body { padding: 16px; }
+  .tab-pane { display: none; }
+  .tab-pane.active { display: block; }
+  .filters { display: flex; gap: 8px; flex-wrap: wrap; }
+  .field { border: 1px solid var(--admin-line); border-radius: 8px; padding: 8px 10px; min-height: 38px; color: var(--admin-slate); background: #fff; }
+  .table-wrap { overflow: auto; }
+  .table-admin { width: 100%; border-collapse: collapse; font-size: .88rem; }
+  .table-admin th { white-space: nowrap; color: var(--admin-muted); text-transform: uppercase; letter-spacing: .06em; font-size: .72rem; padding: 11px; border-bottom: 1px solid var(--admin-line); }
+  .table-admin td { padding: 12px 11px; border-bottom: 1px solid #edf2f7; vertical-align: top; color: #344054; }
+  .content-preview { max-width: 360px; }
+  .content-preview strong { color: var(--admin-ink); }
+  .pill { display: inline-flex; align-items: center; gap: 6px; padding: 5px 9px; border-radius: 999px; font-size: .76rem; font-weight: 850; border: 1px solid transparent; white-space: nowrap; }
+  .pill-blue { color: var(--admin-blue); background: #eff6ff; border-color: #bfdbfe; }
+  .pill-green { color: var(--admin-green); background: #ecfdf5; border-color: #bbf7d0; }
+  .pill-amber { color: var(--admin-amber); background: #fffbeb; border-color: #fde68a; }
+  .pill-red { color: var(--admin-red); background: #fef2f2; border-color: #fecaca; }
+  .pill-gray { color: #475569; background: #f8fafc; border-color: #e2e8f0; }
+  .actions { display: flex; gap: 6px; flex-wrap: wrap; min-width: 220px; }
+  .action { border: 1px solid var(--admin-line); background: #fff; color: var(--admin-slate); border-radius: 8px; padding: 7px 9px; font-weight: 800; font-size: .78rem; }
+  .action:hover { background: #f8fafc; }
+  .action:disabled { opacity: .55; cursor: wait; }
+  .action.good { color: var(--admin-green); border-color: #bbf7d0; }
+  .action.bad { color: var(--admin-red); border-color: #fecaca; }
+  .action.warn { color: var(--admin-amber); border-color: #fde68a; }
+  .chart { height: 170px; display: flex; align-items: end; gap: 9px; }
+  .bar-col { flex: 1; display: grid; gap: 8px; justify-items: center; }
+  .bar { width: 100%; min-height: 8px; border-radius: 8px 8px 3px 3px; background: linear-gradient(180deg, #2563eb, #93c5fd); }
+  .bar-label { color: var(--admin-muted); font-size: .72rem; font-weight: 800; }
+  .empty { text-align: center; color: var(--admin-muted); padding: 24px; }
+  .feed { display: grid; gap: 9px; max-height: 320px; overflow: auto; }
+  .feed-item { border: 1px solid #e6eef8; background: #f8fbff; border-radius: 8px; padding: 10px; }
+  .toast-stack { position: fixed; right: 20px; bottom: 20px; z-index: 1080; display: grid; gap: 10px; width: min(360px, calc(100vw - 32px)); }
+  .admin-toast { background: #fff; border: 1px solid var(--admin-line); border-left: 4px solid var(--admin-blue); border-radius: 8px; padding: 12px 14px; box-shadow: 0 18px 40px rgba(15, 23, 42, .16); color: var(--admin-slate); font-weight: 750; }
+  .admin-toast.good { border-left-color: var(--admin-green); }
+  .admin-toast.bad { border-left-color: var(--admin-red); }
+  .admin-toast.warn { border-left-color: var(--admin-amber); }
+  body.admin-dark { --admin-bg: #111827; --admin-panel: #182233; --admin-ink: #f8fafc; --admin-muted: #aab4c4; --admin-line: #2f3b4f; --admin-slate: #d8dee9; }
+  body.admin-dark .field, body.admin-dark .action { background: #111827; color: #e5e7eb; }
+  body.admin-dark .table-admin td { color: #d8dee9; border-color: #263244; }
+  body.admin-dark .table-admin th, body.admin-dark .panel-head { border-color: var(--admin-line); }
+  @media (max-width: 1100px) { .admin-grid { grid-template-columns: 1fr; } .sidebar { position: static; } .stat-grid { grid-template-columns: repeat(2, minmax(150px, 1fr)); } }
+  @media (max-width: 680px) { .admin-wrap { padding: 16px; } .admin-top { align-items: stretch; flex-direction: column; } .stat-grid { grid-template-columns: 1fr; } .filters .field { width: 100%; } }
+  @media (max-width: 767px) {
+    .admin-shell { min-height: calc(100dvh - 64px); }
+    .admin-wrap { padding: 14px; }
+    .admin-top h1 { font-size: 1.45rem; }
+    .privacy-badge { width: 100%; justify-content: center; }
+    .sidebar { display: flex; gap: 8px; overflow-x: auto; padding: 8px; scroll-snap-type: x proximity; }
+    .nav-label { display: none; }
+    .nav-btn { min-width: max-content; scroll-snap-align: start; }
+    .panel-head { align-items: stretch; }
+    .filters { width: 100%; }
+    .filters .field { flex: 1 1 100%; }
+    .actions { min-width: 0; width: 100%; }
+    .action { flex: 1 1 auto; min-height: 42px; }
+    .content-preview { max-width: 220px; overflow-wrap: anywhere; }
+    .chart { height: 140px; overflow-x: auto; padding-bottom: 4px; }
+    .bar-col { min-width: 54px; }
+  }
+</style>
+
+<section class="admin-shell">
+  <div class="admin-wrap">
+    <div class="admin-top">
+      <div>
+        <h1>Admin Moderation</h1>
+        <p>Review anonymous student content, reports, high-risk alerts, users, analytics, and audit history.</p>
+      </div>
+      <div class="d-flex gap-2 flex-wrap">
+        <span class="privacy-badge"><i class="fas fa-user-secret"></i> Privacy-safe admin view</span>
+        <button class="action" id="themeToggle" type="button"><i class="fas fa-circle-half-stroke"></i> Theme</button>
+      </div>
+    </div>
+
+    <div class="admin-grid">
+      <aside class="sidebar">
+        <div class="nav-label">Admin</div>
+        <button class="nav-btn active" data-tab="dashboard"><i class="fas fa-chart-line"></i>Dashboard</button>
+        <button class="nav-btn" data-tab="moderation"><i class="fas fa-list-check"></i>Moderation Queue</button>
+        <button class="nav-btn" data-tab="reports"><i class="fas fa-flag"></i>Reported Content</button>
+        <button class="nav-btn" data-tab="alerts"><i class="fas fa-triangle-exclamation"></i>High Risk Alerts</button>
+        <button class="nav-btn" data-tab="users"><i class="fas fa-users-gear"></i>User Management</button>
+        <button class="nav-btn" data-tab="analytics"><i class="fas fa-chart-pie"></i>Analytics</button>
+        <button class="nav-btn" data-tab="audit"><i class="fas fa-clock-rotate-left"></i>Audit Logs</button>
+        <button class="nav-btn" data-tab="settings"><i class="fas fa-gear"></i>Settings</button>
+        <a class="nav-btn text-danger text-decoration-none mt-2" href="/api/auth/logout"><i class="fas fa-right-from-bracket"></i>Logout</a>
+      </aside>
+
+      <main>
+        <div class="stat-grid" id="statGrid"></div>
+
+        <section class="tab-pane active" id="tab-dashboard">
+          <div class="row g-3">
+            <div class="col-lg-8">
+              <div class="panel">
+                <div class="panel-head"><h2 class="panel-title">Platform Activity</h2><span class="pill pill-blue">Last 7 days</span></div>
+                <div class="panel-body"><div class="chart" id="activityChart"></div></div>
+              </div>
+            </div>
+            <div class="col-lg-4">
+              <div class="panel">
+                <div class="panel-head"><h2 class="panel-title">Live Notifications</h2><span class="pill pill-green">Socket.IO</span></div>
+                <div class="panel-body"><div class="feed" id="liveFeed"></div></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="tab-pane" id="tab-moderation">
+          <div class="panel">
+            <div class="panel-head">
+              <h2 class="panel-title">Moderation Queue</h2>
+              <div class="filters">
+                <input class="field" id="postSearch" placeholder="Search posts">
+                <select class="field" id="statusFilter"><option value="">All status</option><option value="pending">Pending</option><option value="approved">Approved</option><option value="rejected">Rejected</option><option value="removed">Removed</option><option value="locked">Locked</option><option value="hidden">Hidden</option></select>
+                <select class="field" id="riskFilter"><option value="">All risk</option><option value="safe">Safe</option><option value="moderate">Moderate</option><option value="high">High</option><option value="emergency">Emergency</option></select>
+                <button class="action" onclick="loadPosts()">Apply</button>
+              </div>
+            </div>
+            <div class="table-wrap"><table class="table-admin"><thead><tr><th>Anonymous ID</th><th>Content</th><th>Category</th><th>Risk</th><th>Reports</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead><tbody id="postRows"></tbody></table></div>
+          </div>
+        </section>
+
+        <section class="tab-pane" id="tab-reports">
+          <div class="panel">
+            <div class="panel-head"><h2 class="panel-title">Reported Content Queue</h2><button class="action" onclick="loadReports()">Refresh</button></div>
+            <div class="table-wrap"><table class="table-admin"><thead><tr><th>Anonymous ID</th><th>Reason</th><th>Content Preview</th><th>Reports</th><th>Risk</th><th>Created</th><th>Actions</th></tr></thead><tbody id="reportRows"></tbody></table></div>
+          </div>
+        </section>
+
+        <section class="tab-pane" id="tab-alerts">
+          <div class="panel">
+            <div class="panel-head"><h2 class="panel-title">High Risk Alerts</h2><button class="action" onclick="loadAlerts()">Refresh</button></div>
+            <div class="table-wrap"><table class="table-admin"><thead><tr><th>Anonymous ID</th><th>Type</th><th>Risk</th><th>Labels</th><th>Content Preview</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead><tbody id="alertRows"></tbody></table></div>
+          </div>
+        </section>
+
+        <section class="tab-pane" id="tab-users">
+          <div class="panel">
+            <div class="panel-head"><h2 class="panel-title">Anonymous User Management</h2><button class="action" onclick="loadUsers()">Refresh</button></div>
+            <div class="table-wrap"><table class="table-admin"><thead><tr><th>Anonymous ID</th><th>Role</th><th>Joined</th><th>Posts</th><th>Reports</th><th>Status</th><th>Actions</th></tr></thead><tbody id="userRows"></tbody></table></div>
+          </div>
+        </section>
+
+        <section class="tab-pane" id="tab-analytics">
+          <div class="panel">
+            <div class="panel-head"><h2 class="panel-title">Analytics Module</h2><button class="action" onclick="exportAnalytics()">Export CSV</button></div>
+            <div class="panel-body" id="analyticsBody"></div>
+          </div>
+        </section>
+
+        <section class="tab-pane" id="tab-audit">
+          <div class="panel">
+            <div class="panel-head"><h2 class="panel-title">Audit Logs</h2><button class="action" onclick="loadAudit()">Refresh</button></div>
+            <div class="table-wrap"><table class="table-admin"><thead><tr><th>Action</th><th>Target</th><th>Anonymous ID</th><th>Risk</th><th>Time</th><th>Note</th></tr></thead><tbody id="auditRows"></tbody></table></div>
+          </div>
+        </section>
+
+        <section class="tab-pane" id="tab-settings">
+          <div class="panel">
+            <div class="panel-head"><h2 class="panel-title">Settings</h2></div>
+            <div class="panel-body">
+              <p class="mb-2"><strong>Privacy rule:</strong> Admin pages never display student names, emails, roll numbers, phone numbers, or college IDs.</p>
+              <p class="mb-0 text-muted">Admin navigation intentionally excludes Confession Wall and public feeds. Moderation happens only through queues.</p>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+</section>
+<div class="toast-stack" id="toastStack"></div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+const state = { feed: [], analytics: null };
+const adminUser = { id: '<%= currentUser._id %>', role: '<%= currentUser.role %>' };
+const $ = (selector) => document.querySelector(selector);
+const escapeHtml = (value) => String(value ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[ch]));
+const formatDate = (value) => value ? new Date(value).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' }) : 'N/A';
+const shortText = (value, max = 160) => String(value || '').length > max ? String(value).slice(0, max) + '...' : String(value || '');
+const empty = (cols, text) => '<tr><td colspan="' + cols + '" class="empty">' + escapeHtml(text) + '</td></tr>';
+const valueOrZero = (value) => Number.isFinite(Number(value)) ? Number(value) : 0;
+const firstValue = (...values) => values.find(value => value !== undefined && value !== null && value !== '');
+
+async function api(url, options = {}) {
+  const response = await fetch(url, { credentials: 'same-origin', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }, ...options });
+  const data = await response.json().catch(() => ({ success: false, message: 'Invalid server response' }));
+  if (!data.success) throw new Error(data.message || 'Request failed');
+  return data;
+}
+function toast(message, kind = 'good') {
+  const item = document.createElement('div');
+  item.className = 'admin-toast ' + kind;
+  item.textContent = message;
+  $('#toastStack').appendChild(item);
+  setTimeout(() => item.remove(), 3200);
+}
+function pill(value, kind = 'gray') { return '<span class="pill pill-' + kind + '">' + escapeHtml(value) + '</span>'; }
+function riskPill(risk) {
+  const kind = risk === 'emergency' || risk === 'high' ? 'red' : risk === 'moderate' ? 'amber' : 'green';
+  return pill(risk || 'safe', kind);
+}
+function statusPill(status) {
+  const kind = status === 'approved' || status === 'active' ? 'green' : status === 'pending' || status === 'warned' ? 'amber' : ['removed','rejected','suspended','permanently_suspended'].includes(status) ? 'red' : 'gray';
+  return pill(status || 'pending', kind);
+}
+function addFeed(text, kind = 'blue') {
+  state.feed.unshift({ text, kind, time: new Date().toLocaleTimeString() });
+  $('#liveFeed').innerHTML = state.feed.slice(0, 40).map(item => '<div class="feed-item">' + pill(item.time, item.kind) + '<div class="mt-2">' + escapeHtml(item.text) + '</div></div>').join('') || '<div class="empty">No live events yet.</div>';
+}
+async function loadStats() {
+  const data = await api('/api/admin/stats');
+  const metrics = data.metrics;
+  const cards = [
+    ['Total Users', metrics.totalUsers],
+    ['Total Confessions', metrics.totalConfessions],
+    ['Total Discussions', metrics.totalDiscussions],
+    ['Total Reports', metrics.totalReports],
+    ['Pending Queue', metrics.pendingModeration],
+    ['Emergency Risk', metrics.emergencyRiskPosts],
+    ['Active Counselors', metrics.activeCounselors],
+    ['Monthly Active', metrics.monthlyActiveUsers]
+  ];
+  $('#statGrid').innerHTML = cards.map(([label, value]) => '<div class="stat"><span>' + label + '</span><strong>' + Number(value || 0) + '</strong></div>').join('');
+  renderChart(data.weeklyPosts || []);
+}
+function renderChart(rows) {
+  const map = new Map(rows.map(row => [row._id, row.count]));
+  const days = [...Array(7)].map((_, i) => {
+    const date = new Date();
+    date.setDate(date.getDate() - (6 - i));
+    return date.toISOString().slice(0, 10);
+  });
+  const values = days.map(day => map.get(day) || 0);
+  const max = Math.max(...values, 1);
+  $('#activityChart').innerHTML = days.map((day, i) => '<div class="bar-col"><div class="bar" style="height:' + Math.max(8, Math.round(values[i] / max * 145)) + 'px" title="' + values[i] + ' posts"></div><div class="bar-label">' + day.slice(5) + '</div></div>').join('');
+}
+async function loadPosts() {
+  const params = new URLSearchParams();
+  if ($('#postSearch').value) params.set('search', $('#postSearch').value);
+  if ($('#statusFilter').value) params.set('status', $('#statusFilter').value);
+  if ($('#riskFilter').value) params.set('riskLevel', $('#riskFilter').value);
+  const data = await api('/api/admin/moderation/posts?' + params.toString());
+  $('#postRows').innerHTML = data.posts.length ? data.posts.map(post => '<tr><td>' + pill(post.anonymousId, 'blue') + '</td><td class="content-preview"><strong>' + escapeHtml(post.title) + '</strong><div>' + escapeHtml(shortText(post.content)) + '</div></td><td>' + escapeHtml(post.category) + '</td><td>' + riskPill(post.riskLevel) + '</td><td>' + post.reportsCount + '</td><td>' + statusPill(post.moderationStatus) + '</td><td>' + formatDate(post.createdAt) + '</td><td><div class="actions">' + actionBtn(post.id, 'approve', 'Approve', 'good') + actionBtn(post.id, 'reject', 'Reject', 'warn') + actionBtn(post.id, 'remove', 'Remove', 'bad') + actionBtn(post.id, 'restore', 'Restore', '') + actionBtn(post.id, 'lock', 'Lock', 'warn') + actionBtn(post.id, 'hide', 'Hide', '') + '</div></td></tr>').join('') : empty(8, 'No posts found');
+}
+function actionBtn(id, action, label, cls) { return '<button class="action ' + cls + '" onclick="moderatePost(\'' + id + '\',\'' + action + '\')">' + label + '</button>'; }
+async function moderatePost(id, action) {
+  await api('/api/admin/moderation/posts/' + id + '/' + action, { method: 'PATCH', body: JSON.stringify({ note: 'Admin action from dashboard' }) });
+  addFeed('Post ' + action + ' completed', action === 'approve' ? 'green' : 'amber');
+  await Promise.all([loadStats(), loadPosts()]);
+}
+async function loadReports() {
+  const data = await api('/api/admin/reports');
+  $('#reportRows').innerHTML = data.reports.length ? data.reports.map(report => '<tr><td>' + pill(report.anonymousId, 'blue') + '</td><td>' + escapeHtml(report.reason) + '</td><td class="content-preview">' + escapeHtml(report.contentPreview) + '</td><td>' + report.reportCount + '</td><td>' + riskPill(report.riskLevel) + '</td><td>' + formatDate(report.createdAt) + '</td><td><div class="actions"><button class="action" onclick="reportAction(\'' + report.postId + '\',\'' + report.id + '\',\'dismiss\')">Dismiss</button><button class="action bad" onclick="reportAction(\'' + report.postId + '\',\'' + report.id + '\',\'remove\')">Remove Content</button></div></td></tr>').join('') : empty(7, 'No reported content');
+}
+async function reportAction(postId, reportId, action) {
+  await api('/api/admin/reports/' + postId + '/' + reportId + '/' + action, { method: 'PATCH', body: JSON.stringify({ note: 'Report reviewed' }) });
+  await Promise.all([loadReports(), loadStats()]);
+}
+async function loadAlerts() {
+  const data = await api('/api/admin/alerts');
+  $('#alertRows').innerHTML = data.alerts.length ? data.alerts.map(alert => '<tr><td>' + pill(alert.anonymousId, 'blue') + '</td><td>' + escapeHtml(alert.type) + '</td><td>' + riskPill(alert.riskLevel) + '</td><td>' + escapeHtml((alert.labels || []).join(', ')) + '</td><td class="content-preview">' + escapeHtml(alert.contentPreview) + '</td><td>' + statusPill(alert.status) + '</td><td>' + formatDate(alert.createdAt) + '</td><td><div class="actions">' + actionBtn(alert.postId, 'approve', 'Approve', 'good') + actionBtn(alert.postId, 'remove', 'Remove', 'bad') + '</div></td></tr>').join('') : empty(8, 'No high-risk alerts');
+}
+async function loadUsers() {
+  const data = await api('/api/admin/users?role=student');
+  $('#userRows').innerHTML = data.users.length ? data.users.map(user => {
+    const id = firstValue(user.id, user._id);
+    const joined = firstValue(user.joinedAt, user.createdAt);
+    const posts = valueOrZero(firstValue(user.postsCount, user.sessionCount));
+    const reports = valueOrZero(user.reportsReceived);
+    const status = firstValue(user.accountStatus, user.status, 'active');
+    return '<tr data-user-id="' + escapeHtml(id) + '"><td>' + pill(user.anonymousId || 'Anonymous', 'blue') + '</td><td>' + escapeHtml(user.role || 'student') + '</td><td>' + formatDate(joined) + '</td><td>' + posts + '</td><td>' + reports + '</td><td>' + statusPill(status) + '</td><td><div class="actions"><button class="action warn" onclick="userAction(this,\'' + id + '\',\'warn\')">Warn</button><button class="action bad" onclick="userAction(this,\'' + id + '\',\'suspend\')">Suspend</button><button class="action" onclick="userAction(this,\'' + id + '\',\'unsuspend\')">Unsuspend</button></div></td></tr>';
+  }).join('') : empty(7, 'No users found');
+}
+async function userAction(button, id, action) {
+  if (!id || id === 'undefined') {
+    toast('Cannot update user: missing anonymous profile id', 'bad');
+    return;
+  }
+  const label = button?.textContent || action;
+  if (button) {
+    button.disabled = true;
+    button.textContent = 'Working...';
+  }
+  try {
+    const data = await api('/api/admin/users/' + id + '/' + action, {
+      method: 'PATCH',
+      body: JSON.stringify({ reason: 'Moderation policy action', days: 7 })
+    });
+    toast(data.message || ('User ' + action + ' completed'), action === 'suspend' ? 'warn' : 'good');
+    addFeed('User ' + action + ' action completed', action === 'suspend' ? 'amber' : 'green');
+    await Promise.all([loadUsers(), loadAudit(), loadStats()]);
+  } catch (err) {
+    showError(err);
+    toast(err.message || 'User action failed', 'bad');
+  } finally {
+    if (button) {
+      button.disabled = false;
+      button.textContent = label;
+    }
+  }
+}
+async function loadAnalytics() {
+  const data = await api('/api/admin/analytics');
+  state.analytics = data;
+  $('#analyticsBody').innerHTML = '<div class="row g-3"><div class="col-md-4"><h6>Platform Growth</h6>' + list(data.growth) + '</div><div class="col-md-4"><h6>Most Reported Categories</h6>' + list(data.reportedCategories) + '</div><div class="col-md-4"><h6>Counselor Response Stats</h6>' + list(data.counselorStats.map(row => ({ _id: String(row._id || 'Unassigned').slice(-8), count: row.sessions + ' sessions / ' + row.messages + ' messages' }))) + '</div></div>';
+}
+function list(rows) { return '<div class="feed">' + (rows || []).map(row => '<div class="feed-item"><strong>' + escapeHtml(row._id) + '</strong><div>' + escapeHtml(row.count) + '</div></div>').join('') + '</div>'; }
+function exportAnalytics() {
+  const rows = [['metric','value']];
+  document.querySelectorAll('.stat').forEach(card => rows.push([card.querySelector('span').textContent, card.querySelector('strong').textContent]));
+  const csv = rows.map(row => row.map(cell => '"' + String(cell).replace(/"/g, '""') + '"').join(',')).join('\n');
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
+  link.download = 'admin-analytics.csv';
+  link.click();
+}
+async function loadAudit() {
+  const data = await api('/api/admin/audit-logs');
+  $('#auditRows').innerHTML = data.logs.length ? data.logs.map(log => '<tr><td>' + escapeHtml(log.action) + '</td><td>' + escapeHtml(log.targetType) + '</td><td>' + pill(log.targetSnapshot?.anonymousId || 'N/A', 'blue') + '</td><td>' + riskPill(log.targetSnapshot?.riskLevel) + '</td><td>' + formatDate(log.createdAt) + '</td><td>' + escapeHtml(log.note || '') + '</td></tr>').join('') : empty(6, 'No audit logs yet');
+}
+function switchTab(tab) {
+  document.querySelectorAll('.nav-btn[data-tab]').forEach(btn => btn.classList.toggle('active', btn.dataset.tab === tab));
+  document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.toggle('active', pane.id === 'tab-' + tab));
+  if (tab === 'moderation') loadPosts().catch(showError);
+  if (tab === 'reports') loadReports().catch(showError);
+  if (tab === 'alerts') loadAlerts().catch(showError);
+  if (tab === 'users') loadUsers().catch(showError);
+  if (tab === 'analytics') loadAnalytics().catch(showError);
+  if (tab === 'audit') loadAudit().catch(showError);
+}
+function showError(err) { console.error(err); addFeed(err.message || 'Something went wrong', 'red'); }
+document.querySelectorAll('.nav-btn[data-tab]').forEach(btn => btn.addEventListener('click', () => switchTab(btn.dataset.tab)));
+$('#themeToggle').addEventListener('click', () => document.body.classList.toggle('admin-dark'));
+if (typeof io !== 'undefined') {
+  const socket = io({ auth: { userId: adminUser.id, role: adminUser.role } });
+  socket.on('connect', () => { socket.emit('join-admin-room'); addFeed('Admin console connected', 'green'); });
+  socket.on('admin:postPending', data => addFeed('Pending post from ' + data.anonymousId + ' (' + data.riskLevel + ')', 'amber'));
+  socket.on('admin:newReport', data => addFeed('New report for ' + data.anonymousId + ': ' + data.reason, 'red'));
+  socket.on('admin:highRiskAlert', data => addFeed('High risk alert for ' + data.anonymousId, 'red'));
+  socket.on('admin:moderationFlag', data => addFeed('AI moderation flag for ' + data.anonymousId, 'amber'));
+  socket.on('admin:moderationUpdated', data => {
+    addFeed('Moderation updated for ' + (data.anonymousId || 'anonymous content'), 'green');
+    if ($('#tab-moderation').classList.contains('active')) loadPosts().catch(showError);
+    if ($('#tab-alerts').classList.contains('active')) loadAlerts().catch(showError);
+    loadStats().catch(showError);
+  });
+  socket.on('admin:reportUpdated', data => {
+    addFeed('Report ' + data.action + ' for ' + (data.anonymousId || 'anonymous content'), data.action === 'remove' ? 'red' : 'green');
+    if ($('#tab-reports').classList.contains('active')) loadReports().catch(showError);
+    loadStats().catch(showError);
+  });
+  socket.on('admin:queuesChanged', () => {
+    if ($('#tab-moderation').classList.contains('active')) loadPosts().catch(showError);
+    if ($('#tab-reports').classList.contains('active')) loadReports().catch(showError);
+    if ($('#tab-alerts').classList.contains('active')) loadAlerts().catch(showError);
+    if ($('#tab-audit').classList.contains('active')) loadAudit().catch(showError);
+  });
+  socket.on('admin:userUpdated', data => {
+    addFeed('User ' + data.action + ' updated in realtime', data.action === 'suspend' ? 'amber' : 'green');
+    if ($('#tab-users').classList.contains('active')) loadUsers().catch(showError);
+    if ($('#tab-audit').classList.contains('active')) loadAudit().catch(showError);
+  });
+}
+addFeed('Privacy-safe admin dashboard ready', 'green');
+Promise.all([loadStats(), loadPosts()]).catch(showError);
+setInterval(() => loadStats().catch(showError), 30000);
+</script>
+
+<%- include('partials/footer') %>

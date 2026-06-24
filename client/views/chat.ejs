@@ -29,14 +29,17 @@ body{
 /* Main Container */
 .chat-container {
     display: flex;
-    height: calc(100vh - 80px);
+    height: calc(100dvh - 80px);
+    min-height: 0;
     width: 100%;
     background: var(--bg-color);
+    overflow: hidden;
 }
 
 /* Sidebar */
 .chat-sidebar {
-    width: 350px;
+    width: clamp(280px, 28vw, 380px);
+    flex: 0 0 clamp(280px, 28vw, 380px);
     background: var(--sidebar-bg);
     border-right: 1px solid var(--border-color);
     display: flex;
@@ -167,6 +170,7 @@ body{
 /* Main Chat Area */
 .chat-main {
     flex: 1;
+    min-width: 0;
     display: flex;
     flex-direction: column;
     height: 100%;
@@ -310,7 +314,7 @@ body{
 .messages-container {
     flex: 1;
     overflow-y: auto;
-    padding: 20px 15%;
+    padding: clamp(12px, 3vw, 24px) clamp(12px, 10vw, 15%);
     background: var(--chat-bg);
     background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="none" stroke="%23e0e7ff" stroke-width="1" opacity="0.2"/></svg>');
     background-size: 50px 50px;
@@ -338,7 +342,8 @@ body{
 }
 
 .message-content {
-    max-width: 55%;
+    max-width: min(680px, 65%);
+    min-width: 0;
     
 }
 
@@ -348,6 +353,7 @@ body{
     font-size: 0.95rem;
     line-height: 1.4;
     word-wrap: break-word;
+    overflow-wrap: anywhere;
     box-shadow: 0 1px 2px rgba(0,0,0,0.1);
 }
 
@@ -519,6 +525,7 @@ body{
     padding: 5px 10px;
     border: 1px solid var(--border-color);
     transition: all 0.3s ease;
+    min-width: 0;
 }
 
 .message-input-wrapper:focus-within {
@@ -528,6 +535,7 @@ body{
 
 .message-input {
     flex: 1;
+    min-width: 0;
     border: none;
     padding: 10px 12px;
     font-size: 0.95rem;
@@ -612,24 +620,132 @@ body{
 
 /* Responsive Design */
 @media (max-width: 768px) {
+    .chat-container {
+        height: calc(100dvh - 64px);
+        min-height: 640px;
+        flex-direction: column;
+        overflow: hidden;
+    }
+
     .chat-sidebar {
         width: 100%;
-        position: fixed;
-        left: -100%;
-        transition: left 0.3s ease;
-        z-index: 1000;
+        flex: 0 0 auto;
+        height: auto;
+        max-height: 34dvh;
+        position: static;
+        border-right: 0;
+        border-bottom: 1px solid var(--border-color);
     }
-    
-    .chat-sidebar.show {
-        left: 0;
+
+    .sidebar-header {
+        padding: 12px 16px;
+    }
+
+    .chats-list {
+        display: grid;
+        grid-auto-flow: column;
+        grid-auto-columns: minmax(240px, 82vw);
+        gap: 8px;
+        overflow-x: auto;
+        overflow-y: hidden;
+        padding: 10px 12px 12px;
+        scroll-snap-type: x proximity;
+    }
+
+    .chat-item {
+        margin-bottom: 0;
+        scroll-snap-align: start;
     }
     
     .chat-main {
         width: 100%;
+        min-height: 0;
+    }
+
+    .chat-header {
+        padding: 8px 12px;
+        gap: 10px;
+    }
+
+    .chat-header-info {
+        min-width: 0;
+    }
+
+    .chat-header-info h4,
+    .chat-header-info .last-seen {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        max-width: 58vw;
+    }
+
+    .messages-container {
+        padding: 12px;
+        background-size: 42px 42px;
+    }
+
+    .message {
+        margin-bottom: 10px;
+    }
+
+    .message.sent {
+        margin-left: 8%;
+    }
+
+    .message.received {
+        margin-right: 8%;
     }
     
     .message-content {
-        max-width: 80%;
+        max-width: 92%;
+    }
+
+    .message-input-container {
+        padding: 10px 12px max(10px, env(safe-area-inset-bottom));
+    }
+
+    .reply-preview {
+        margin: 0 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .chat-container {
+        min-height: 560px;
+    }
+
+    .chats-list {
+        grid-auto-columns: minmax(220px, 88vw);
+    }
+
+    .chat-item-preview {
+        max-width: 140px;
+    }
+
+    .message.sent,
+    .message.received {
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    .message-content {
+        max-width: calc(100% - 40px);
+    }
+
+    .message-bubble {
+        padding: 9px 11px;
+        font-size: 0.92rem;
+    }
+}
+
+@media (orientation: landscape) and (max-height: 560px) {
+    .chat-container {
+        height: calc(100dvh - 56px);
+        min-height: 420px;
+    }
+
+    .chat-sidebar {
+        max-height: 30dvh;
     }
 }
 </style>
@@ -707,7 +823,7 @@ body{
                 <p>Start a conversation with a counselor</p>
             </div>
         </div>
-        
+
         <!-- Reply Preview -->
         <div class="reply-preview" id="replyPreview">
             <div class="reply-preview-content">
@@ -733,14 +849,25 @@ body{
     </div>
 </div>
 <script src="/socket.io/socket.io.js"></script>
+<script src="/js/voice-messaging.js"></script>
+<script src="/js/RatingService.js"></script>
+<script src="/js/StarRating.js"></script>
+<script src="/js/RatingModal.js"></script>
 <script>
 let socket;
 let currentChatId = null;
 let currentReplyMessage = null;
 let editingMessageId = null;
 let messages = [];
+let counselorRatingModal = null;
 
 document.addEventListener('DOMContentLoaded', function() {
+    counselorRatingModal = new window.RatingModal({
+        onSubmitted: () => {
+            sessionStorage.removeItem('studentMsgCount');
+        }
+    });
+
     const path = window.location.pathname.split("/");
     const chatId = path[path.length - 1];
     if (chatId && chatId !== 'chat') {
@@ -748,6 +875,18 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     initializeSocket();
+    VoiceMessaging.init({
+        key: "student-chat",
+        role: "student",
+        wrapperSelector: ".message-input-wrapper",
+        getChatId: () => currentChatId,
+        getReplyId: () => currentReplyMessage?.id || null,
+        onSent: () => {
+            cancelReply();
+            const prev = parseInt(sessionStorage.getItem('studentMsgCount') || '0');
+            sessionStorage.setItem('studentMsgCount', prev + 1);
+        }
+    });
 
     // Load sidebar chats first, then highlight active + load messages
     loadChats().then(() => {
@@ -766,7 +905,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 function initializeSocket() {
-    socket = io("http://localhost:5000", {
+    socket = io({
         auth: { userId: "<%= user._id %>", role: "student" }
     });
 
@@ -796,8 +935,22 @@ function initializeSocket() {
             messages.push(msg);
             displayNewMessage(msg);
         }
+        markCurrentChatAsRead();
     });
 
+    socket.on("conversationRead", ({ chatId, readerRole }) => {
+        if (readerRole === "student") {
+            clearChatUnreadIndicator(chatId);
+        }
+    });
+
+    socket.on("conversationUpdated", () => { loadChats(); });
+    socket.on("refreshConversations", () => { loadChats(); });
+    socket.on("ratingPrompt", (payload) => {
+        const counselorId = payload?.counselorId || sessionStorage.getItem('currentCounselorId');
+        const counselorName = sessionStorage.getItem('currentCounselorName') || document.getElementById('currentCounselorName')?.innerText || 'your counselor';
+        maybeShowRatingModal(counselorId, counselorName, payload?.messageCount || messages.length);
+    });
     // ✅ Edit — update only that bubble in DOM
     socket.on("messageEdited", ({ messageId, newText }) => {
         const msg = messages.find(m => String(m._id) === String(messageId));
@@ -810,16 +963,60 @@ function initializeSocket() {
     });
 
     // ✅ Delete — update only that bubble in DOM
-    socket.on("messageDeleted", ({ messageId }) => {
+    socket.on("messageDeleted", ({ messageId, messageType, deletedBy, replacementForSender, replacementForReceiver, replyReplacement }) => {
         const msg = messages.find(m => String(m._id) === String(messageId));
-        if (msg) { msg.deletedForAll = true; msg.text = "This message was deleted"; }
+        const myId = "<%= user._id %>";
+        const replacement = String(deletedBy) === myId ? replacementForSender : replacementForReceiver;
+        if (msg) {
+            msg.deletedForAll = true;
+            msg.text = replacement || (messageType === "voice" ? "This voice message was deleted" : "This message was deleted");
+            if (messageType === "voice") msg.voice = null;
+        }
+        messages.forEach(child => {
+            if (String(child.replyTo?.messageId || '') === String(messageId)) {
+                child.replyTo.deletedForAll = true;
+                child.replyTo.text = replyReplacement || (messageType === "voice" ? "Deleted Voice Message" : "Deleted Message");
+            }
+        });
 
         const bubble = document.querySelector(`[data-message-id="${messageId}"] .message-bubble`);
         if (bubble) {
-            bubble.innerHTML = '<em style="opacity:0.6">This message was deleted</em>';
+            bubble.classList.add('deleted-msg');
+            bubble.innerHTML = `<em style="opacity:0.6">${escapeHTML(msg?.text || replacement || 'This message was deleted')}</em>`;
         }
         const menuBtn = document.querySelector(`[data-message-id="${messageId}"] .msg-menu-btn`);
         if (menuBtn) menuBtn.remove();
+        document.querySelectorAll(`[data-reply-target="${messageId}"]`).forEach(reply => {
+            reply.querySelector('[data-reply-text]').textContent = replyReplacement || (messageType === "voice" ? "Deleted Voice Message" : "Deleted Message");
+        });
+        loadChats();
+    });
+
+    socket.on("messageDeletedForMe", ({ messageId, deletedFor }) => {
+        if (String(deletedFor) !== "<%= user._id %>") return;
+        document.querySelector(`[data-message-id="${messageId}"]`)?.remove();
+        const msg = messages.find(m => String(m._id) === String(messageId));
+        if (msg) {
+            msg.deletedFor = msg.deletedFor || [];
+            msg.deletedFor.push("<%= user._id %>");
+        }
+        loadChats();
+    });
+
+    socket.on("messageStatusUpdated", ({ messageIds, status, readerId }) => {
+        const ids = new Set((messageIds || []).map(String));
+        messages.forEach(msg => {
+            if (!ids.has(String(msg._id))) return;
+            if (status === "seen") {
+                msg.seenBy = Array.from(new Set([...(msg.seenBy || []).map(String), String(readerId)]));
+                msg.readBy = Array.from(new Set([...(msg.readBy || []).map(String), String(readerId)]));
+            }
+        });
+        ids.forEach(id => {
+            const msg = getMessageById(id);
+            const statusEl = document.querySelector(`[data-message-id="${id}"] [data-message-status]`);
+            if (statusEl && msg) statusEl.outerHTML = getStatusIcon(msg, true);
+        });
     });
 
     // ✅ Chat cleared
@@ -852,6 +1049,7 @@ function selectChat(chatId) {
 
     document.querySelectorAll('.chat-item').forEach(i => i.classList.remove('active'));
     document.querySelector(`[data-chat-id="${chatId}"]`)?.classList.add('active');
+    clearChatUnreadIndicator(chatId);
 
     if (socket) {
         socket.emit('join-chat', chatId);
@@ -917,13 +1115,14 @@ function displayChats(chats) {
 
         // Unread badge
         const unread = chat.unreadCount || 0;
+        const previewText = unread > 0 ? lastMsgText : 'No unread messages';
         const unreadHTML = unread > 0
             ? `<span style="background:#2f80ed;color:white;font-size:11px;font-weight:600;padding:2px 7px;border-radius:12px;">${unread}</span>`
             : '';
 
 
    return `
-    <div class="chat-item ${isActive ? 'active' : ''}"
+    <div class="chat-item ${isActive ? 'active' : ''} ${unread > 0 ? 'has-unread' : ''}"
          data-chat-id="${chat._id}"
          onclick="selectChat('${chat._id}')"
          style="position:relative;"
@@ -942,10 +1141,10 @@ function displayChats(chats) {
         <div class="chat-item-info">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2px;">
                 <span class="chat-item-name">${name}</span>
-                <span style="font-size:0.7rem;color:#94a3b8;">${timeStr}</span>
+                <span class="chat-item-time" style="font-size:0.7rem;color:#94a3b8;">${timeStr}</span>
             </div>
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2px;">
-                <span class="chat-item-preview">${lastMsgText}</span>
+                <span class="chat-item-preview">${previewText}</span>
                 ${unreadHTML}
             </div>
             <span style="font-size:0.7rem;font-weight:600;color:${isOnline ? '#059669' : '#9ca3af'};">
@@ -982,6 +1181,11 @@ function loadMessages() {
                 messages = data.chat.messages || [];
                 displayMessages(messages);
                 updateChatHeader(data.chat);
+                markCurrentChatAsRead();
+                if (data.ratingPrompt?.shouldPrompt) {
+                    const counselorName = document.getElementById('currentCounselorName')?.innerText || 'your counselor';
+                    maybeShowRatingModal(data.ratingPrompt.counselorId, counselorName, data.ratingPrompt.messageCount);
+                }
             }
         })
         .catch(console.error);
@@ -999,27 +1203,89 @@ function displayMessages(msgs) {
     scrollToBottom();
 }
 
+function escapeHTML(value) {
+    return String(value || '').replace(/[&<>"']/g, char => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
+    }[char]));
+}
+
+function jsString(value) {
+    return JSON.stringify(String(value || '')).replace(/</g, '\\u003c');
+}
+
+function getMessageById(messageId) {
+    return messages.find(m => String(m._id) === String(messageId));
+}
+
+function getMessageType(message) {
+    return message?.messageType || (message?.voice?.url ? 'voice' : 'text');
+}
+
+function formatVoiceDuration(message) {
+    return window.VoiceMessaging?.formatDuration
+        ? VoiceMessaging.formatDuration(message?.voice?.duration || message?.replyTo?.duration || 0)
+        : '0:00';
+}
+
+function getReplyLabel(message) {
+    const type = getMessageType(message);
+    if (message?.deletedForAll) return type === 'voice' ? 'Deleted Voice Message' : 'Deleted Message';
+    if (type === 'voice') return `Voice Message (${formatVoiceDuration(message)})`;
+    return message?.text || 'Message';
+}
+
+function getStatusIcon(message, isSent) {
+    if (!isSent) return '';
+    const myId = "<%= user._id %>";
+    const seen = (message.seenBy || message.readBy || []).map(String).some(id => id !== myId);
+    const delivered = (message.deliveredTo || []).map(String).some(id => id !== myId);
+    if (seen) return '<span data-message-status class="message-status seen" title="Seen">✓✓</span>';
+    if (delivered) return '<span data-message-status class="message-status delivered" title="Delivered">✓✓</span>';
+    return '<span data-message-status class="message-status sent" title="Sent">✓</span>';
+}
+
+function renderReplyPreview(replyTo) {
+    if (!replyTo) return '';
+    const messageId = replyTo.messageId || replyTo._id || '';
+    const isVoiceReply = replyTo.messageType === 'voice';
+    const text = replyTo.deletedForAll
+        ? (isVoiceReply ? 'Deleted Voice Message' : 'Deleted Message')
+        : (replyTo.text || (isVoiceReply ? `Voice Message (${VoiceMessaging.formatDuration(replyTo.duration || 0)})` : 'Message'));
+    return `
+        <button type="button" class="reply-preview-bubble" data-reply-target="${escapeHTML(messageId)}" onclick="scrollToOriginalMessage('${escapeHTML(messageId)}')" style="background:rgba(0,0,0,0.06);border:0;border-left:3px solid #2f80ed;padding:5px 10px;border-radius:8px;margin-bottom:4px;font-size:0.8rem;opacity:0.85;text-align:left;cursor:pointer;width:100%;">
+            <span style="display:block;color:#2f80ed;font-weight:700;">Replying to ${isVoiceReply ? 'Voice Message' : 'Message'}</span>
+            <span data-reply-text>${escapeHTML(text).substring(0, 80)}</span>
+        </button>`;
+}
+
 function createMessageHTML(message, myId) {
     myId = myId || "<%= user._id %>";
     const isSent = String(message.senderId) === myId || message.sender === "student";
     const time = message.timestamp ? new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
     const msgId = String(message._id || Date.now());
     const isDeleted = message.deletedForAll;
+    const type = getMessageType(message);
+    const isVoice = type === "voice" && message.voice?.url;
 
     // Filter "deleted for me"
     if (!isDeleted && message.deletedFor?.map(String).includes(myId)) return '';
 
-    const safeText = (message.text || '').replace(/"/g, '&quot;').replace(/'/g, "&#39;");
+    const menuText = getReplyLabel(message);
+    const safeText = escapeHTML(menuText);
     const bubbleContent = isDeleted
-        ? '<em style="opacity:0.6">This message was deleted</em>'
+        ? `<em style="opacity:0.6">${escapeHTML(message.text || (type === "voice" ? "This voice message was deleted" : "This message was deleted"))}</em>`
+        : isVoice
+            ? VoiceMessaging.renderVoiceMessage(message, isSent, isSent ? "You" : "Counselor")
         : (message.text || '') + (message.edited ? ' <span style="font-size:0.7rem;opacity:0.6">(edited)</span>' : '');
 
-    const replyHTML = message.replyTo
-        ? `<div class="reply-preview-bubble" style="background:rgba(0,0,0,0.06);border-left:3px solid #2f80ed;padding:5px 10px;border-radius:8px;margin-bottom:4px;font-size:0.8rem;opacity:0.8">${message.replyTo.text?.substring(0, 60) || ''}</div>`
-        : '';
+    const replyHTML = renderReplyPreview(message.replyTo);
 
     const menuHTML = !isDeleted ? `
-        <button class="msg-menu-btn" onclick="showMessageMenu(event,'${msgId}','${safeText}',${isSent})"
+        <button class="msg-menu-btn" onclick="showMessageMenu(event,'${msgId}','${safeText}',${isSent},'${type}')"
             style="background:none;border:none;color:#aaa;cursor:pointer;padding:2px 6px;border-radius:50%;font-size:0.8rem;opacity:0;transition:opacity 0.2s">
             <i class="fas fa-chevron-down"></i>
         </button>` : '';
@@ -1031,7 +1297,7 @@ function createMessageHTML(message, myId) {
             <div class="message-content">
                 ${replyHTML}
                 <div class="message-bubble ${isDeleted ? 'deleted-msg' : ''}">${bubbleContent}</div>
-                <div class="message-time">${time}</div>
+                <div class="message-time">${time} ${getStatusIcon(message, isSent)}</div>
             </div>
             ${menuHTML}
         </div>`;
@@ -1040,7 +1306,8 @@ function createMessageHTML(message, myId) {
 // ─── MESSAGE CONTEXT MENU (WhatsApp style) ───
 let activeMenu = null;
 
-function showMessageMenu(event, msgId, text, isMine) {
+function showMessageMenu(event, msgId, text, isMine, messageType = 'text') {
+    event.preventDefault();
     event.stopPropagation();
     closeAllMenus();
 
@@ -1058,8 +1325,10 @@ function showMessageMenu(event, msgId, text, isMine) {
 
     const buttons = [];
     buttons.push({ icon: 'fa-reply', label: 'Reply', fn: `replyToMessage('${msgId}','${text}')` });
-    if (isMine) {
+    if (isMine && messageType !== 'voice') {
         buttons.push({ icon: 'fa-edit', label: 'Edit', fn: `startEdit('${msgId}','${text}')` });
+    }
+    if (isMine) {
         buttons.push({ icon: 'fa-users-slash', label: 'Delete for Everyone', fn: `doDelete('${msgId}','all')`, danger: true });
     }
     buttons.push({ icon: 'fa-user-times', label: 'Delete for Me', fn: `doDelete('${msgId}','me')`, danger: true });
@@ -1103,10 +1372,19 @@ document.addEventListener('click', closeAllMenus);
 
 // ─── REPLY ───
 function replyToMessage(msgId, text) {
-    currentReplyMessage = { id: msgId, text: decodeURIComponent(text.replace(/&#39;/g, "'").replace(/&quot;/g, '"')) };
+    currentReplyMessage = { id: msgId, text: text.replace(/&#39;/g, "'").replace(/&quot;/g, '"').replace(/&amp;/g, '&') };
     document.getElementById('replyPreviewText').textContent = currentReplyMessage.text.substring(0, 80);
     document.getElementById('replyPreview').classList.add('show');
     document.getElementById('messageInput').focus();
+}
+
+function scrollToOriginalMessage(messageId) {
+    const target = document.querySelector(`[data-message-id="${messageId}"]`);
+    if (!target) return;
+    target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    target.style.outline = '2px solid #2f80ed';
+    target.style.outlineOffset = '4px';
+    setTimeout(() => { target.style.outline = ''; target.style.outlineOffset = ''; }, 1400);
 }
 
 function cancelReply() {
@@ -1202,8 +1480,27 @@ function sendMessage() {
             // ✅ Increment message count for rating trigger
             const prev = parseInt(sessionStorage.getItem('studentMsgCount') || '0');
             sessionStorage.setItem('studentMsgCount', prev + 1);
+            if (data.ratingPrompt?.shouldPrompt) {
+                const counselorName = document.getElementById('currentCounselorName')?.innerText || 'your counselor';
+                maybeShowRatingModal(data.ratingPrompt.counselorId, counselorName, data.ratingPrompt.messageCount);
+            }
         }
     });
+}
+
+async function maybeShowRatingModal(counselorId, counselorName, messageCount) {
+    if (!counselorId || Number(messageCount || 0) < 10) return;
+    const modalKey = `ratingPromptShown:${counselorId}`;
+    if (sessionStorage.getItem(modalKey)) return;
+
+    try {
+        const data = await window.RatingService.check(counselorId);
+        if (!data.success || data.hasRated) return;
+        sessionStorage.setItem(modalKey, '1');
+        counselorRatingModal?.open({ counselorId, counselorName });
+    } catch (error) {
+        console.error('Rating check failed:', error);
+    }
 }
 
 
@@ -1249,10 +1546,38 @@ function updateChatPreview(msg) {
         if (item.dataset.chatId === msg.chatId) {
             const preview = item.querySelector('.chat-item-preview');
             const time = item.querySelector('.chat-item-time');
-            if (preview) preview.textContent = msg.text || "New message";
+            const isOpenChat = String(msg.chatId) === String(currentChatId);
+            if (preview) preview.textContent = isOpenChat ? "No unread messages" : (msg.messageType === "voice" ? "Voice message" : (msg.text || "New message"));
             if (time) time.textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            if (isOpenChat) clearChatUnreadIndicator(msg.chatId);
         }
     });
+}
+
+async function markCurrentChatAsRead() {
+    if (!currentChatId) return;
+    try {
+        const res = await fetch(`/api/chat/${currentChatId}/read`, {
+            method: 'POST',
+            credentials: 'same-origin'
+        });
+        const data = await res.json();
+        if (data.success) {
+            clearChatUnreadIndicator(currentChatId);
+        }
+    } catch (err) {
+        console.error("Mark read error:", err);
+    }
+}
+
+function clearChatUnreadIndicator(chatId) {
+    const item = document.querySelector(`.chat-item[data-chat-id="${chatId}"]`);
+    if (!item) return;
+    item.classList.remove('has-unread');
+    const preview = item.querySelector('.chat-item-preview');
+    if (preview) preview.textContent = "No unread messages";
+    const badge = item.querySelector('span[style*="background:#2f80ed"]');
+    if (badge) badge.remove();
 }
 
 function displayNewMessage(msg) {

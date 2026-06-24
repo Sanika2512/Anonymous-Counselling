@@ -581,6 +581,89 @@ body::before {
 
 #searchCounselors::placeholder { color: var(--text-muted); }
 
+.counselor-filter-panel {
+  background: rgba(255,255,255,0.86);
+  border: 1.5px solid #e4e9f8;
+  border-radius: 18px;
+  padding: 18px;
+  margin-bottom: 24px;
+  box-shadow: 0 10px 30px rgba(67,97,238,0.08);
+}
+
+.filter-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(160px, 1fr));
+  gap: 12px;
+}
+
+.filter-control label {
+  display: block;
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.filter-control select {
+  width: 100%;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 11px 12px;
+  color: var(--text-primary);
+  background: white;
+  font-weight: 600;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.filter-control select:focus {
+  border-color: var(--brand);
+  box-shadow: 0 0 0 4px rgba(67,97,238,0.1);
+}
+
+.filter-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.clear-filters-btn, .load-more-btn {
+  border: 1.5px solid #dfe6fb;
+  background: white;
+  color: var(--brand);
+  border-radius: 999px;
+  padding: 10px 16px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.clear-filters-btn:hover, .load-more-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(67,97,238,0.12);
+}
+
+.results-meta {
+  color: var(--text-muted);
+  font-size: 0.86rem;
+  font-weight: 700;
+}
+
+.counselor-skeleton {
+  height: 315px;
+  border-radius: 24px;
+  background: linear-gradient(90deg, #f3f6ff 25%, #e9eefb 37%, #f3f6ff 63%);
+  background-size: 400% 100%;
+  animation: skeletonShimmer 1.3s ease infinite;
+}
+
+@keyframes skeletonShimmer {
+  0% { background-position: 100% 0; }
+  100% { background-position: 0 0; }
+}
+
 /* ===== COUNSELORS GRID ===== */
 #counselorsGrid {
   display: grid;
@@ -992,6 +1075,7 @@ body::before {
   .welcome-section { padding: 28px 24px; }
   .welcome-section h1 { font-size: 1.5rem; }
   #counselorsGrid { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
+  .filter-grid { grid-template-columns: repeat(2, minmax(150px, 1fr)); }
 }
 
 @media (max-width: 767px) {
@@ -999,6 +1083,8 @@ body::before {
   .welcome-stats { flex-direction: column; gap: 12px; }
   .action-buttons { flex-direction: column; }
   .btn-refresh { width: 100%; }
+  .filter-grid { grid-template-columns: 1fr; }
+  .filter-actions { flex-direction: column; align-items: stretch; }
 }
 
 /* ===== ENTRANCE ANIMATIONS ===== */
@@ -1011,6 +1097,403 @@ body::before {
 .action-buttons { animation: fadeUp 0.6s 0.1s ease both; }
 .section-title { animation: fadeUp 0.6s 0.2s ease both; }
 .search-wrapper { animation: fadeUp 0.6s 0.25s ease both; }
+
+/* ===== RECOMMENDED RESOURCES ===== */
+.recommendations-panel {
+  background: rgba(255,255,255,0.92);
+  border: 1px solid rgba(67,97,238,0.14);
+  border-radius: 18px;
+  padding: 24px;
+  margin-bottom: 32px;
+  box-shadow: 0 12px 34px rgba(15,22,40,0.08);
+}
+
+.recommendations-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 18px;
+}
+
+.recommendations-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.recommendations-title i {
+  width: 42px;
+  height: 42px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  color: #4361ee;
+  background: #eef1ff;
+}
+
+.recommendations-title h3 {
+  font-family: 'Sora', sans-serif;
+  font-size: 1.14rem;
+  font-weight: 700;
+  margin: 0;
+  color: var(--text-primary);
+}
+
+.recommendations-title p {
+  margin: 3px 0 0;
+  color: var(--text-secondary);
+  font-size: 0.88rem;
+}
+
+.recommendations-disclaimer {
+  color: #64748b;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 10px 12px;
+  font-size: 0.78rem;
+  line-height: 1.45;
+  max-width: 360px;
+}
+
+.recommendations-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 14px;
+}
+
+.resource-card {
+  background: #fff;
+  border: 1px solid #e7ebf6;
+  border-radius: 14px;
+  padding: 16px;
+  min-height: 190px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.resource-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(67,97,238,0.28);
+  box-shadow: 0 12px 28px rgba(67,97,238,0.12);
+}
+
+.resource-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.resource-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  background: linear-gradient(135deg, #4361ee, #06d6a0);
+  flex-shrink: 0;
+}
+
+.resource-type {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #4361ee;
+  background: #eef1ff;
+  border-radius: 999px;
+  padding: 5px 10px;
+}
+
+.resource-card h4 {
+  font-family: 'Sora', sans-serif;
+  font-size: 0.98rem;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.resource-card p {
+  color: var(--text-secondary);
+  font-size: 0.86rem;
+  line-height: 1.45;
+  margin: 0;
+}
+
+.resource-category {
+  color: #0f766e;
+  background: #ecfdf5;
+  border-radius: 999px;
+  padding: 5px 10px;
+  font-size: 0.74rem;
+  font-weight: 700;
+  width: fit-content;
+}
+
+.resource-action {
+  margin-top: auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: none;
+  border-radius: 10px;
+  background: #0f1628;
+  color: #fff;
+  padding: 10px 12px;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.resource-action:hover {
+  color: #fff;
+  background: #4361ee;
+}
+
+.recommendations-state {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 30px 16px;
+  color: var(--text-secondary);
+  border: 1px dashed #dbe3f0;
+  border-radius: 14px;
+  background: #fbfdff;
+}
+
+.recommendation-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.recommendation-chip {
+  color: #334155;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+@media (max-width: 991px) {
+  .recommendations-header {
+    flex-direction: column;
+  }
+  .recommendations-disclaimer {
+    max-width: none;
+    width: 100%;
+  }
+}
+
+@media (max-width: 575px) {
+  .recommendations-panel {
+    padding: 18px;
+    border-radius: 14px;
+  }
+  .recommendations-grid {
+    grid-template-columns: 1fr;
+  }
+  .action-buttons {
+    flex-direction: column;
+  }
+}
+
+/* ===== DEVICE ADAPTATION OVERRIDES ===== */
+.container-fluid,
+.main-content,
+.welcome-section,
+.recommendations-panel,
+.counselor-filter-panel,
+#counselorsGrid,
+.card,
+.filter-control,
+.search-wrapper {
+  min-width: 0;
+}
+
+.main-content {
+  overflow-x: hidden;
+}
+
+.welcome-section,
+.recommendations-panel,
+.counselor-filter-panel,
+.resource-card,
+#counselorsGrid .card {
+  overflow-wrap: anywhere;
+}
+
+.search-wrapper input,
+.filter-control select,
+.filter-control input {
+  min-width: 0;
+  width: 100%;
+}
+
+.action-buttons,
+.filter-actions,
+.recommendations-header,
+.section-title {
+  min-width: 0;
+}
+
+.toast-notification {
+  right: max(12px, env(safe-area-inset-right));
+  left: auto;
+  width: min(340px, calc(100vw - 24px));
+}
+
+@media (max-width: 991px) {
+  .sidebar {
+    position: relative;
+    top: auto;
+    min-height: auto;
+    padding: 18px 16px;
+    justify-content: flex-start;
+  }
+
+  .user-profile-container {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    text-align: left;
+    gap: 12px 16px;
+  }
+
+  .avatar-circle {
+    width: 72px;
+    height: 72px;
+  }
+
+  .user-profile-container h5,
+  .badge-student {
+    justify-self: start;
+  }
+
+  .sidebar-divider,
+  .counselor-status-badge,
+  .auto-chatbot-text,
+  .weather-widget {
+    grid-column: 1 / -1;
+    width: 100%;
+  }
+
+  .main-content {
+    padding: 22px 18px;
+  }
+
+  .welcome-section {
+    margin-top: 0;
+  }
+}
+
+@media (max-width: 767px) {
+  .main-content {
+    padding: 18px 14px;
+  }
+
+  .welcome-section,
+  .recommendations-panel,
+  .counselor-filter-panel {
+    border-radius: 16px;
+    padding: 18px;
+  }
+
+  .welcome-section h1 {
+    font-size: clamp(1.35rem, 7vw, 1.8rem);
+  }
+
+  .welcome-section p,
+  .recommendations-title p,
+  .recommendations-disclaimer {
+    font-size: 0.9rem;
+  }
+
+  .welcome-stats {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .action-buttons,
+  .filter-actions {
+    align-items: stretch;
+  }
+
+  .action-buttons > *,
+  .filter-actions > *,
+  .btn-chatbot,
+  .btn-refresh,
+  .clear-filters-btn,
+  .load-more-btn {
+    width: 100%;
+  }
+
+  .section-title {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .section-title-line {
+    flex-basis: 100%;
+  }
+
+  .recommendations-title {
+    align-items: flex-start;
+  }
+
+  #counselorsGrid {
+    gap: 14px;
+  }
+
+  #counselorsGrid .card {
+    margin: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .user-profile-container {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .avatar-circle,
+  .user-profile-container h5,
+  .badge-student {
+    justify-self: center;
+  }
+
+  .welcome-stat {
+    min-width: 0;
+  }
+
+  .resource-card {
+    min-height: 0;
+  }
+}
+
+@media (orientation: landscape) and (max-height: 560px) {
+  .sidebar {
+    min-height: auto;
+  }
+
+  .user-profile-container {
+    grid-template-columns: auto minmax(0, 1fr) minmax(180px, 260px);
+  }
+
+  .sidebar-divider {
+    display: none;
+  }
+}
 </style>
 
 <!-- Loading Overlay -->
@@ -1145,6 +1628,28 @@ body::before {
                 </button>
             </div>
 
+            <!-- Recommended Resources -->
+            <section class="recommendations-panel" aria-labelledby="recommendedResourcesTitle">
+                <div class="recommendations-header">
+                    <div class="recommendations-title">
+                        <i class="fas fa-lightbulb"></i>
+                        <div>
+                            <h3 id="recommendedResourcesTitle">Recommended Resources</h3>
+                            <p>Personalized support based on your recent issues and chat context</p>
+                        </div>
+                    </div>
+                    <div class="recommendations-disclaimer" id="recommendationsDisclaimer">
+                        These resources are informational and do not replace professional mental health support.
+                    </div>
+                </div>
+                <div class="recommendation-chips" id="recommendationChips"></div>
+                <div class="recommendations-grid" id="recommendationsGrid">
+                    <div class="recommendations-state">
+                        <i class="fas fa-spinner fa-spin me-2"></i>Loading recommendations...
+                    </div>
+                </div>
+            </section>
+
             <!-- Counselors Section -->
             <div class="row">
                 <div class="col-12">
@@ -1160,10 +1665,75 @@ body::before {
                     <div class="search-wrapper">
                         <i class="fas fa-search" id="searchIcon"></i>
                         <input type="text" id="searchCounselors"
-                               placeholder="Search by name or specialization… (Ctrl+K)"
-                               onkeyup="searchCounselors()"
+                               placeholder="Search by name, specialization, education, or bio…"
+                               oninput="debouncedSearchCounselors()"
                                onfocus="animateSearchFocus()"
                                onblur="animateSearchBlur()">
+                    </div>
+
+                    <div class="counselor-filter-panel">
+                        <div class="filter-grid">
+                            <div class="filter-control">
+                                <label for="educationFilter">Education</label>
+                                <select id="educationFilter" onchange="applyCounselorFilters()">
+                                    <option value="all">All Education</option>
+                                    <option>BA Psychology</option>
+                                    <option>MA Psychology</option>
+                                    <option>MSc Psychology</option>
+                                    <option>Diploma Counseling Psychology</option>
+                                    <option>Clinical Psychology</option>
+                                </select>
+                            </div>
+                            <div class="filter-control">
+                                <label for="specializationFilter">Specialization</label>
+                                <select id="specializationFilter" onchange="applyCounselorFilters()">
+                                    <option value="all">All Specializations</option>
+                                    <option>Stress Management</option>
+                                    <option>Anxiety</option>
+                                    <option>Depression</option>
+                                    <option>Placement Stress</option>
+                                    <option>Relationship Issues</option>
+                                    <option>Academic Pressure</option>
+                                    <option>Hostel Adjustment</option>
+                                    <option>Self Confidence</option>
+                                </select>
+                            </div>
+                            <div class="filter-control">
+                                <label for="availabilityFilter">Availability</label>
+                                <select id="availabilityFilter" onchange="applyCounselorFilters()">
+                                    <option value="all">Any Availability</option>
+                                    <option value="online">Online</option>
+                                    <option value="availableNow">Available Now</option>
+                                    <option value="busy">Busy</option>
+                                    <option value="offline">Offline</option>
+                                </select>
+                            </div>
+                            <div class="filter-control">
+                                <label for="ratingFilter">Ratings</label>
+                                <select id="ratingFilter" onchange="applyCounselorFilters()">
+                                    <option value="all">Any Rating</option>
+                                    <option value="5">5 Stars</option>
+                                    <option value="4">4+ Stars</option>
+                                    <option value="3">3+ Stars</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="filter-actions">
+                            <div class="filter-control" style="min-width:220px;">
+                                <label for="sortFilter">Sort by</label>
+                                <select id="sortFilter" onchange="applyCounselorFilters()">
+                                    <option value="online">Online First</option>
+                                    <option value="highestRated">Highest Rated</option>
+                                    <option value="lowestRated">Lowest Rated</option>
+                                    <option value="mostExperienced">Most Experienced</option>
+                                    <option value="newestAdded">Newest Added</option>
+                                </select>
+                            </div>
+                            <span class="results-meta" id="counselorResultsMeta">Loading counselors...</span>
+                            <button class="clear-filters-btn" type="button" onclick="clearCounselorFilters()">
+                                <i class="fas fa-filter-circle-xmark me-1"></i>Clear Filters
+                            </button>
+                        </div>
                     </div>
 
                     <!-- Grid -->
@@ -1183,10 +1753,16 @@ body::before {
 </div>
 
 <script src="/socket.io/socket.io.js"></script>
+<script src="/js/RatingService.js"></script>
+<script src="/js/StarRating.js"></script>
+<script src="/js/RatingModal.js"></script>
 <script>
 let socket;
 let allCounselors = [];
+let filteredCounselors = [];
 let searchTimeout;
+let memoizedFilterKey = '';
+let memoizedFilterResult = [];
 
 let selectedRating = 0;
 let ratingShownThisSession = false;
@@ -1206,6 +1782,88 @@ function showToast(title, message, type = 'info') {
     toast.style.borderLeftColor = colors[type] || colors.info;
     toast.classList.add('show');
     setTimeout(() => toast.classList.remove('show'), 3000);
+}
+
+function escapeHTML(value) {
+    return String(value || '').replace(/[&<>"']/g, (char) => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
+    }[char]));
+}
+
+function renderRecommendationCards(items = []) {
+    const grid = document.getElementById('recommendationsGrid');
+    if (!grid) return;
+
+    if (!items.length) {
+        grid.innerHTML = `
+            <div class="recommendations-state">
+                <i class="fas fa-leaf mb-2 d-block" style="font-size:1.6rem;color:#94a3b8;"></i>
+                No recommendations yet. Start a chat or submit an issue to receive personalized support.
+            </div>`;
+        return;
+    }
+
+    grid.innerHTML = items.map(item => {
+        const hasUrl = item.url && /^https?:\/\//i.test(item.url);
+        const button = hasUrl
+            ? `<a class="resource-action" href="${escapeHTML(item.url)}" target="_blank" rel="noopener noreferrer">
+                   <i class="fas fa-arrow-up-right-from-square"></i>Open
+               </a>`
+            : `<button class="resource-action" type="button" onclick="showToast('Wellness Tip', '${escapeHTML(item.action || item.description).replace(/'/g, "\\'")}', 'info')">
+                   <i class="fas fa-eye"></i>View
+               </button>`;
+
+        return `
+            <article class="resource-card">
+                <div class="resource-card-top">
+                    <span class="resource-icon"><i class="fas ${escapeHTML(item.icon || 'fa-leaf')}"></i></span>
+                    <span class="resource-type">${escapeHTML(item.type || 'tip')}</span>
+                </div>
+                <span class="resource-category">${escapeHTML(item.category || 'Wellness')}</span>
+                <h4>${escapeHTML(item.title)}</h4>
+                <p>${escapeHTML(item.description)}</p>
+                <p><strong>Try:</strong> ${escapeHTML(item.action)}</p>
+                ${button}
+            </article>`;
+    }).join('');
+}
+
+function renderRecommendationChips(categories = []) {
+    const chips = document.getElementById('recommendationChips');
+    if (!chips) return;
+    chips.innerHTML = categories.map(category => `
+        <span class="recommendation-chip">
+            <i class="fas ${escapeHTML(category.icon || 'fa-leaf')} me-1"></i>${escapeHTML(category.label)}
+        </span>
+    `).join('');
+}
+
+async function loadDashboardRecommendations(silent = false) {
+    const grid = document.getElementById('recommendationsGrid');
+    if (!grid) return;
+    if (!silent) {
+        grid.innerHTML = `<div class="recommendations-state"><i class="fas fa-spinner fa-spin me-2"></i>Loading recommendations...</div>`;
+    }
+
+    try {
+        const res = await fetch('/api/recommendations/dashboard', { credentials: 'same-origin' });
+        const data = await res.json();
+        if (!data.success) throw new Error(data.message || 'Recommendation request failed');
+        document.getElementById('recommendationsDisclaimer').textContent = data.disclaimer;
+        renderRecommendationChips(data.detectedCategories || []);
+        renderRecommendationCards(data.recommendations || []);
+    } catch (err) {
+        grid.innerHTML = `
+            <div class="recommendations-state">
+                <i class="fas fa-triangle-exclamation mb-2 d-block" style="font-size:1.5rem;color:#ff6b6b;"></i>
+                Recommendations are temporarily unavailable. Your counseling workflow is still working.
+            </div>`;
+        if (!silent) showToast('Resources', 'Could not load recommendations right now.', 'error');
+    }
 }
 
 /* ===== RATING ===== */
@@ -1285,6 +1943,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     initializeSocket();
     checkCounselorStatus();
+    loadDashboardRecommendations();
     setInterval(checkCounselorStatus, 10000);
     observeCards();
 
@@ -1306,7 +1965,7 @@ window.addEventListener('pageshow', function(event) {
 });
 
 function initializeSocket() {
-    socket = io("http://localhost:5000", { auth: { userId: "<%= user._id %>", role: "student" } });
+    socket = io({ auth: { userId: "<%= user._id %>", role: "student" } });
 
     socket.on('connect', () => {
         if (typeof currentIssueId !== 'undefined' && currentIssueId) socket.emit('join-chat', currentIssueId);
@@ -1335,6 +1994,10 @@ function initializeSocket() {
         showToast('Profile Updated', 'Counselor information has been updated', 'info');
     });
 
+    socket.on("recommendations-refresh", () => {
+        loadDashboardRecommendations(true);
+    });
+
     socket.on("online-users", async (users) => {
         const el = document.getElementById("onlineCounselorCount");
         if (el) el.innerText = users.length;
@@ -1350,48 +2013,6 @@ function initializeSocket() {
         } catch(err) { console.error("Error fetching online counselors:", err); }
     });
 }
-// REPLACE the existing checkCounselorStatus function with this:
-async function checkCounselorStatus() {
-    try {
-        const [allRes, onlineRes] = await Promise.all([
-            fetch('/api/counselors/all', { credentials: 'same-origin' }),
-            fetch('/api/counselors/online', { credentials: 'same-origin' })
-        ]);
-        const allData = await allRes.json();
-        const onlineData = await onlineRes.json();
-        const onlineIds = new Set((onlineData.success ? onlineData.counselors : []).map(c => String(c._id)));
-        if (allData.success) {
-            allCounselors = allData.counselors.map(c => ({ ...c, isOnline: onlineIds.has(String(c._id)) }));
-            const onlineCount = allCounselors.filter(c => c.isOnline).length;
-            updateCounselorStatus(onlineCount > 0, onlineCount);
-            displayCounselors(allCounselors);
-        } else {
-            updateCounselorStatus(false, 0);
-            displayCounselors([]);
-        }
-    } catch(error) {
-        console.error('Status check error:', error);
-        updateCounselorStatus(false, 0);
-        displayCounselors([]);
-        showToast('Error', 'Failed to load counselors', 'error');
-    } finally {
-        // ✅ ALWAYS hide loading overlay, no matter what
-        hideLoading();
-    }
-}
-function updateCounselorStatus(isOnline, count) {
-    const statusEl = document.getElementById('counselorStatus');
-    const statEl = document.getElementById('onlineCounselorCountStat');
-    if (statEl) statEl.textContent = count;
-    if (isOnline) {
-        statusEl.className = 'counselor-status-badge counselor-online';
-        statusEl.innerHTML = `<span class="realtime-indicator"></span><span class="fw-bold">${count} Counselor${count>1?'s':''} Online</span>`;
-    } else {
-        statusEl.className = 'counselor-status-badge counselor-offline';
-        statusEl.innerHTML = `<span class="realtime-indicator" style="background:#6c757d;animation:none;"></span><span>Offline — Chatbot Active</span>`;
-    }
-}
-
 function generateStars(rating) {
     let stars = '';
     const full = Math.floor(rating);
@@ -1404,172 +2025,648 @@ function generateStars(rating) {
     return stars;
 }
 
-function displayCounselors(counselors) {
-    const grid = document.getElementById('counselorsGrid');
-    const countEl = document.getElementById('onlineCounselorCount');
-    if (countEl) countEl.textContent = counselors.length;
-    const statEl = document.getElementById('onlineCounselorCountStat');
-    if (statEl) statEl.textContent = counselors.filter(c => c.isOnline).length;
+function updateCounselorCards(onlineCounselors) { /* counselor list is refreshed and re-filtered in one render pass */ }
 
-    if (counselors.length === 0) {
-        grid.innerHTML = `
-            <div class="empty-state" style="grid-column:1/-1;">
-                <div class="empty-state-icon"><i class="fas fa-user-md"></i></div>
-                <h5 style="font-family:'Sora',sans-serif;font-weight:700;color:#1a2639;margin-bottom:8px;">No counselors available</h5>
-                <p style="color:#94a3b8;margin-bottom:20px;">Our chatbot is here for you 24/7</p>
-                <button class="btn-chatbot" onclick="startChatbot()" style="display:inline-flex;padding:13px 28px;width:auto;border-radius:50px;">
-                    <i class="fas fa-robot me-2"></i>Start Chatbot
-                </button>
-            </div>`;
-        return;
-    }
+const DEFAULT_FILTERS = Object.freeze({
+    education: "all",
+    specialization: "all",
+    availability: "all",
+    rating: "all",
+    search: "",
+    sortBy: "online"
+});
 
-    let html = '';
-    counselors.forEach(c => {
-        const fullName = `${c.firstName||''} ${c.lastName||''}`.trim() || 'Counselor';
-        const firstNameOnly = c.firstName || 'Counselor';
-        const photo = c.profilePhoto ? `/uploads/images/${c.profilePhoto}` : '/images/default-avatar.png';
-        const rating = c.rating || 4.5;
-        const spec = c.specialization || 'Stress & Anxiety Management';
-        const edu = c.education || 'Diploma in Counseling Psychology';
+let filters = { ...DEFAULT_FILTERS };
+let counselorPage = 1;
+let counselorHasMore = false;
+let counselorLoading = false;
+let counselorFetchToken = 0;
+let counselorRatingModal;
 
-        html += `
-        <div data-counselor-id="${c._id}">
-            <div class="card ${!c.isOnline ? 'counselor-offline-card' : ''}" onclick="viewCounselorProfile('${c._id}')">
-                <div class="card-body">
-                    <div class="avatar-wrap">
-                        <img src="${photo}" class="rounded-circle" width="88" height="88" alt="${fullName}" onerror="this.src='/images/default-avatar.png'">
-                        <span class="counselor-status-dot ${c.isOnline ? 'dot-online' : 'dot-offline'}"></span>
-                    </div>
-                    <h5>${fullName}</h5>
-                    <div class="mb-1">
-                        <span class="online-status-label ${c.isOnline ? 'label-online' : 'label-offline'}">
-                            <i class="fas fa-circle" style="font-size:6px;"></i>
-                            ${c.isOnline ? 'Online' : 'Offline'}
-                        </span>
-                    </div>
-                    <div class="specialization-badge">${spec}</div>
-                    <div class="education-text"><i class="fas fa-graduation-cap"></i>${edu}</div>
-                    <div class="counselor-rating">${generateStars(rating)}</div>
-                    <button class="btn-chat ${!c.isOnline ? 'btn-chat-offline' : ''}"
-                        onclick="event.stopPropagation(); startChat('${c._id}', '${fullName.replace(/'/g,"\\'")}', ${c.isOnline})">
-                        <i class="fas fa-comment-dots"></i>Chat with ${firstNameOnly}
-                    </button>
-                </div>
-            </div>
-        </div>`;
-    });
+const COUNSELOR_FETCH_LIMIT = 50;
+const BUSY_ISSUE_LIMIT = 5;
 
-    grid.innerHTML = html;
-    observeCards();
+const filterControls = Object.freeze({
+    education: "educationFilter",
+    specialization: "specializationFilter",
+    availability: "availabilityFilter",
+    rating: "ratingFilter",
+    sortBy: "sortFilter",
+    search: "searchCounselors"
+});
+
+const normalizeText = (value) => String(value ?? "").trim().toLowerCase();
+const normalizeNumber = (value, fallback = 0) => {
+    const number = Number(value);
+    return Number.isFinite(number) ? number : fallback;
+};
+
+function debounce(callback, wait = 300) {
+    return function debouncedCallback(...args) {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => callback.apply(this, args), wait);
+    };
 }
 
-function updateCounselorCards(onlineCounselors) { /* handled by full re-render */ }
+function toValueList(value) {
+    if (Array.isArray(value)) return value.flatMap(toValueList);
+    if (value === null || value === undefined) return [];
+    return String(value)
+        .split(",")
+        .map(item => item.trim())
+        .filter(Boolean);
+}
 
-function searchCounselors() {
-    clearTimeout(searchTimeout);
-    searchTimeout = setTimeout(() => {
-        const term = document.getElementById('searchCounselors').value.toLowerCase();
-        const filtered = allCounselors.filter(c => {
-            const name = `${c.firstName||''} ${c.lastName||''}`.toLowerCase();
-            return name.includes(term) || (c.specialization||'').toLowerCase().includes(term);
-        });
-        displayCounselors(filtered);
-        if (term.length > 0) showToast('Search', `Found ${filtered.length} counselor${filtered.length !== 1 ? 's' : ''}`, 'info');
-    }, 300);
+function uniqueSortedValues(values) {
+    const seen = new Map();
+    values.flatMap(toValueList).forEach(value => {
+        const key = normalizeText(value);
+        if (key && !seen.has(key)) seen.set(key, value.trim());
+    });
+    return [...seen.values()].sort((a, b) => a.localeCompare(b));
+}
+
+function getComparableValues(...values) {
+    return values.flatMap(toValueList).map(normalizeText).filter(Boolean);
+}
+
+function valueMatchesFilter(selectedValue, ...candidateValues) {
+    const selected = normalizeText(selectedValue);
+    if (!selected || selected === "all") return true;
+    return getComparableValues(...candidateValues).some(value => (
+        value === selected || value.includes(selected) || selected.includes(value)
+    ));
+}
+
+function getCounselorName(counselor) {
+    return `${counselor?.firstName || ""} ${counselor?.lastName || ""}`.trim() || counselor?.username || "";
+}
+
+function getCounselorRating(counselor) {
+    return Math.max(0, Math.min(5, normalizeNumber(counselor?.rating, 0)));
+}
+
+function getCounselorExperience(counselor) {
+    return normalizeNumber(
+        counselor?.experienceYears ??
+        counselor?.yearsExperience ??
+        counselor?.experience ??
+        counselor?.totalReviews ??
+        counselor?.totalRatings,
+        0
+    );
+}
+
+function getCounselorCreatedTime(counselor) {
+    if (counselor?.createdAt) {
+        const created = Date.parse(counselor.createdAt);
+        if (Number.isFinite(created)) return created;
+    }
+
+    const objectIdPrefix = String(counselor?._id || "").slice(0, 8);
+    const objectIdSeconds = parseInt(objectIdPrefix, 16);
+    return Number.isFinite(objectIdSeconds) ? objectIdSeconds * 1000 : 0;
+}
+
+function getCounselorUpdatedSignature(counselor) {
+    return [
+        counselor?._id,
+        counselor?.isOnline,
+        counselor?.available,
+        counselor?.activeIssues,
+        counselor?.rating,
+        counselor?.totalRatings,
+        counselor?.totalReviews,
+        counselor?.education,
+        counselor?.qualification,
+        JSON.stringify(counselor?.specialization ?? ""),
+        counselor?.bio,
+        counselor?.createdAt,
+        counselor?.lastSeen
+    ].join(":");
+}
+
+function isCounselorOnline(counselor) {
+    return counselor?.isOnline === true;
+}
+
+function isCounselorAvailableNow(counselor) {
+    if (!isCounselorOnline(counselor)) return false;
+    if (typeof counselor?.available === "boolean") return counselor.available;
+    if (counselor?.activeIssues !== undefined && counselor?.activeIssues !== null) {
+        return normalizeNumber(counselor.activeIssues, BUSY_ISSUE_LIMIT) < BUSY_ISSUE_LIMIT;
+    }
+    return true;
+}
+
+function isCounselorBusy(counselor) {
+    if (!isCounselorOnline(counselor)) return false;
+    if (typeof counselor?.available === "boolean") return counselor.available === false;
+    if (counselor?.activeIssues !== undefined && counselor?.activeIssues !== null) {
+        return normalizeNumber(counselor.activeIssues, 0) >= BUSY_ISSUE_LIMIT;
+    }
+    return false;
+}
+
+function syncFilterState(patch = {}) {
+    filters = {
+        education: patch.education ?? document.getElementById(filterControls.education)?.value ?? filters.education,
+        specialization: patch.specialization ?? document.getElementById(filterControls.specialization)?.value ?? filters.specialization,
+        availability: patch.availability ?? document.getElementById(filterControls.availability)?.value ?? filters.availability,
+        rating: patch.rating ?? document.getElementById(filterControls.rating)?.value ?? filters.rating,
+        search: (patch.search ?? document.getElementById(filterControls.search)?.value ?? filters.search).trim(),
+        sortBy: patch.sortBy ?? document.getElementById(filterControls.sortBy)?.value ?? filters.sortBy
+    };
+    return { ...filters };
+}
+
+function buildFilterCacheKey(counselors, currentFilters) {
+    return `${JSON.stringify(currentFilters)}::${counselors.length}::${counselors.map(getCounselorUpdatedSignature).join("|")}`;
+}
+
+function matchesEducation(counselor, currentFilters) {
+    return valueMatchesFilter(currentFilters.education, counselor?.education, counselor?.qualification);
+}
+
+function matchesSpecialization(counselor, currentFilters) {
+    return valueMatchesFilter(currentFilters.specialization, counselor?.specialization, counselor?.skills);
+}
+
+function matchesAvailability(counselor, currentFilters) {
+    if (currentFilters.availability === "all") return true;
+    if (currentFilters.availability === "online") return isCounselorOnline(counselor);
+    if (currentFilters.availability === "offline") return !isCounselorOnline(counselor);
+    if (currentFilters.availability === "availableNow") return isCounselorAvailableNow(counselor);
+    if (currentFilters.availability === "busy") return isCounselorBusy(counselor);
+    return true;
+}
+
+function matchesRating(counselor, currentFilters) {
+    if (currentFilters.rating === "all") return true;
+    const rating = getCounselorRating(counselor);
+    const selectedRating = normalizeNumber(currentFilters.rating, 0);
+    return selectedRating >= 5 ? rating >= 5 : rating >= selectedRating;
+}
+
+function matchesSearch(counselor, currentFilters) {
+    const query = normalizeText(currentFilters.search);
+    if (!query) return true;
+
+    const searchableText = [
+        getCounselorName(counselor),
+        counselor?.username,
+        ...toValueList(counselor?.specialization),
+        ...toValueList(counselor?.skills),
+        counselor?.education,
+        counselor?.qualification,
+        counselor?.bio
+    ].map(normalizeText).join(" ");
+
+    return searchableText.includes(query);
+}
+
+function sortCounselors(a, b, sortBy) {
+    const nameDiff = getCounselorName(a).localeCompare(getCounselorName(b));
+    const onlineDiff = Number(isCounselorOnline(b)) - Number(isCounselorOnline(a));
+    const availableDiff = Number(isCounselorAvailableNow(b)) - Number(isCounselorAvailableNow(a));
+    const ratingDiff = getCounselorRating(b) - getCounselorRating(a);
+    const ratingAscDiff = getCounselorRating(a) - getCounselorRating(b);
+    const experienceDiff = getCounselorExperience(b) - getCounselorExperience(a);
+    const newestDiff = getCounselorCreatedTime(b) - getCounselorCreatedTime(a);
+
+    if (sortBy === "highestRated") return ratingDiff || onlineDiff || availableDiff || nameDiff;
+    if (sortBy === "lowestRated") return ratingAscDiff || onlineDiff || nameDiff;
+    if (sortBy === "mostExperienced") return experienceDiff || ratingDiff || onlineDiff || nameDiff;
+    if (sortBy === "newestAdded") return newestDiff || onlineDiff || ratingDiff || nameDiff;
+
+    return onlineDiff || availableDiff || ratingDiff || nameDiff;
+}
+
+function counselorFilterPipeline(counselors, currentFilters) {
+    return [...(Array.isArray(counselors) ? counselors : [])]
+        .filter(counselor => matchesEducation(counselor, currentFilters))
+        .filter(counselor => matchesSpecialization(counselor, currentFilters))
+        .filter(counselor => matchesAvailability(counselor, currentFilters))
+        .filter(counselor => matchesRating(counselor, currentFilters))
+        .filter(counselor => matchesSearch(counselor, currentFilters))
+        .sort((a, b) => sortCounselors(a, b, currentFilters.sortBy));
+}
+
+function getFilteredCounselors(patch = {}) {
+    const currentFilters = syncFilterState(patch);
+    const cacheKey = buildFilterCacheKey(allCounselors, currentFilters);
+    if (cacheKey === memoizedFilterKey) return memoizedFilterResult;
+
+    memoizedFilterKey = cacheKey;
+    memoizedFilterResult = counselorFilterPipeline(allCounselors, currentFilters);
+    filteredCounselors = memoizedFilterResult;
+
+    console.log("Total:", allCounselors.length);
+    console.log("Filtered:", filteredCounselors.length);
+    console.log("Filters:", currentFilters);
+
+    return filteredCounselors;
+}
+
+function setSelectOptions(selectId, values, allLabel) {
+    const select = document.getElementById(selectId);
+    if (!select) return;
+
+    const previousValue = select.value || "all";
+    select.innerHTML = [`<option value="all">${allLabel}</option>`]
+        .concat(values.map(value => `<option value="${escapeHTML(value)}">${escapeHTML(value)}</option>`))
+        .join("");
+    select.value = values.some(value => normalizeText(value) === normalizeText(previousValue)) ? previousValue : "all";
+}
+
+function hydrateFilterOptions(counselors) {
+    setSelectOptions(
+        filterControls.education,
+        uniqueSortedValues(counselors.flatMap(counselor => [counselor?.education, counselor?.qualification])),
+        "All Education"
+    );
+    setSelectOptions(
+        filterControls.specialization,
+        uniqueSortedValues(counselors.flatMap(counselor => [counselor?.specialization, counselor?.skills])),
+        "All Specializations"
+    );
+}
+
+const debouncedApplyCounselorFilters = debounce(() => {
+    applyCounselorFilters();
+}, 300);
+
+function debouncedSearchCounselors() {
+    debouncedApplyCounselorFilters();
+}
+
+function bindFilterControls() {
+    document.getElementById(filterControls.search)?.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") {
+            event.preventDefault();
+            applyCounselorFilters();
+        }
+    });
 }
 
 function animateSearchFocus() {
-    document.getElementById('searchIcon').style.color = '#4361ee';
-    document.getElementById('searchIcon').style.transform = 'scale(1.1)';
+    const icon = document.getElementById("searchIcon");
+    if (!icon) return;
+    icon.style.color = "#4361ee";
+    icon.style.transform = "scale(1.1)";
 }
 
 function animateSearchBlur() {
-    document.getElementById('searchIcon').style.color = '#9aa3c0';
-    document.getElementById('searchIcon').style.transform = 'scale(1)';
+    const icon = document.getElementById("searchIcon");
+    if (!icon) return;
+    icon.style.color = "#9aa3c0";
+    icon.style.transform = "scale(1)";
 }
 
 function refreshCounselorsWithAnimation(btn) {
-    btn.querySelector('i').classList.add('fa-spin');
+    btn?.querySelector("i")?.classList.add("fa-spin");
     showLoading();
     checkCounselorStatus().finally(() => {
         setTimeout(() => {
-            btn.querySelector('i').classList.remove('fa-spin');
+            btn?.querySelector("i")?.classList.remove("fa-spin");
             hideLoading();
-            showToast('Refreshed', 'Counselors list updated', 'success');
+            showToast("Refreshed", "Counselors list updated", "success");
         }, 500);
     });
 }
 
 function startChatbotWithAnimation(btn) {
-    const icon = btn.querySelector('i');
-    icon.style.transform = 'rotate(15deg) scale(1.2)';
-    setTimeout(() => { icon.style.transform = ''; startChatbot(); }, 200);
+    const icon = btn.querySelector("i");
+    icon.style.transform = "rotate(15deg) scale(1.2)";
+    setTimeout(() => { icon.style.transform = ""; startChatbot(); }, 200);
 }
 
 function observeCards() {
-    const cards = document.querySelectorAll('#counselorsGrid .card');
+    const cards = document.querySelectorAll("#counselorsGrid .card");
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
-                entry.target.style.opacity = '1';
-                entry.target.style.transform = 'translateY(0) scale(1)';
+                entry.target.style.opacity = "1";
+                entry.target.style.transform = "translateY(0) scale(1)";
             }
         });
     }, { threshold: 0.08 });
-    cards.forEach((card, i) => {
-        card.style.opacity = '0';
-        card.style.transform = 'translateY(28px) scale(0.97)';
-        card.style.transition = `opacity 0.5s ${i * 0.07}s ease, transform 0.5s ${i * 0.07}s cubic-bezier(0.34,1.3,0.64,1)`;
+
+    cards.forEach((card, index) => {
+        card.style.opacity = "0";
+        card.style.transform = "translateY(28px) scale(0.97)";
+        card.style.transition = `opacity 0.5s ${index * 0.07}s ease, transform 0.5s ${index * 0.07}s cubic-bezier(0.34,1.3,0.64,1)`;
         observer.observe(card);
     });
 }
 
-function viewCounselorProfile(counselorId) { showToast('Profile', 'Viewing counselor profile', 'info'); }
-function showProfile() { showToast('Profile', 'Viewing your profile', 'info'); }
-function refreshWeather() { showToast('Weather', 'Weather information updated', 'success'); }
+function viewCounselorProfile(counselorId) { showToast("Profile", "Viewing counselor profile", "info"); }
+function showProfile() { showToast("Profile", "Viewing your profile", "info"); }
+function refreshWeather() { showToast("Weather", "Weather information updated", "success"); }
 
-// REPLACE the existing startChat function with this:
 async function startChat(counselorId, counselorName, isOnline = false) {
-    if (!isOnline) showToast('Counselor Offline', `${counselorName} is offline. Message saved — they will reply when available.`, 'info');
+    if (!isOnline) showToast("Counselor Offline", `${counselorName} is offline. Message saved - they will reply when available.`, "info");
     try {
         showLoading();
-        const res = await fetch('/api/chat/start', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            credentials: 'same-origin',
+        const res = await fetch("/api/chat/start", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: "same-origin",
             body: JSON.stringify({ counselorId })
         });
         const data = await res.json();
         if (data.success) {
-            sessionStorage.setItem('currentChatId', data.chatId);
-            sessionStorage.setItem('currentCounselorId', counselorId);
-            sessionStorage.setItem('currentCounselorName', counselorName);
-            sessionStorage.setItem('anonymousId', data.anonymousId);
-            // ✅ Don't hide loading here — let pageshow handle it on return
+            sessionStorage.setItem("currentChatId", data.chatId);
+            sessionStorage.setItem("currentCounselorId", counselorId);
+            sessionStorage.setItem("currentCounselorName", counselorName);
+            sessionStorage.setItem("anonymousId", data.anonymousId);
             window.location.href = `/chat/${data.chatId}`;
         } else {
-            hideLoading(); // ✅ Only hide on failure
-            showToast('Error', data.message || 'Unable to start chat', 'error');
+            hideLoading();
+            showToast("Error", data.message || "Unable to start chat", "error");
         }
     } catch(err) {
-        hideLoading(); // ✅ Always hide on error
-        showToast('Error', 'Server error. Please try again.', 'error');
+        hideLoading();
+        showToast("Error", "Server error. Please try again.", "error");
     }
 }
 
 function startChatbot() {
     showLoading();
-    showToast('Chatbot', 'Starting anonymous chatbot session...', 'info');
-    setTimeout(() => { hideLoading(); window.location.href = '/chatbot'; }, 500);
+    showToast("Chatbot", "Starting anonymous chatbot session...", "info");
+    setTimeout(() => { hideLoading(); window.location.href = "/chatbot"; }, 500);
 }
 
-document.getElementById('searchCounselors')?.addEventListener('keypress', function(e) {
-    if (e.key === 'Enter') { searchCounselors(); showToast('Search', 'Searching counselors...', 'info'); }
+document.addEventListener("DOMContentLoaded", function() {
+    bindFilterControls();
+    counselorRatingModal = new window.RatingModal({
+        onSubmitted: (counselorId, data) => {
+            updateCardRating(counselorId, data.avgRating, data.totalRatings);
+            applyCounselorFilters();
+            fetchCounselors(true);
+            showToast("Thank You", "Your counselor rating was submitted.", "success");
+        }
+    });
 });
 
-document.addEventListener('keydown', function(e) {
-    if (e.ctrlKey && e.key === 'k') { e.preventDefault(); document.getElementById('searchCounselors').focus(); }
+function buildCounselorQuery(page = 1) {
+    const params = new URLSearchParams();
+    params.set("sort", "online");
+    params.set("page", page);
+    params.set("limit", COUNSELOR_FETCH_LIMIT);
+    return params;
+}
+
+function showCounselorSkeletons() {
+    const grid = document.getElementById("counselorsGrid");
+    if (!grid) return;
+    grid.innerHTML = Array.from({ length: 6 }, () => '<div class="counselor-skeleton"></div>').join("");
+}
+
+async function fetchCounselors(silent = false) {
+    const fetchToken = ++counselorFetchToken;
+    counselorLoading = true;
+    const grid = document.getElementById("counselorsGrid");
+    const meta = document.getElementById("counselorResultsMeta");
+    if (!silent) showCounselorSkeletons();
+    if (meta) meta.textContent = "Loading counselors...";
+
+    try {
+        const counselors = [];
+        let page = 1;
+        let hasMore = true;
+
+        while (hasMore) {
+            const res = await fetch(`/api/counselors/all?${buildCounselorQuery(page).toString()}`, {
+                credentials: "same-origin"
+            });
+            const data = await res.json();
+            if (!data.success) throw new Error(data.message || "Unable to load counselors");
+
+            counselors.push(...(Array.isArray(data.counselors) ? data.counselors : []));
+            hasMore = Boolean(data.pagination?.hasMore);
+            page += 1;
+        }
+
+        if (fetchToken !== counselorFetchToken) return;
+
+        allCounselors = counselors;
+        counselorPage = 1;
+        counselorHasMore = false;
+        memoizedFilterKey = "";
+        hydrateFilterOptions(allCounselors);
+        renderFilteredCounselors();
+    } catch (error) {
+        console.error("Counselor fetch failed:", error);
+        if (grid) {
+            grid.innerHTML = `
+                <div class="empty-state" style="grid-column:1/-1;">
+                    <div class="empty-state-icon"><i class="fas fa-triangle-exclamation"></i></div>
+                    <h5 style="font-family:'Sora',sans-serif;font-weight:700;color:#1a2639;margin-bottom:8px;">Counselors could not be loaded</h5>
+                    <p style="color:#94a3b8;margin-bottom:20px;">Please try refreshing the list.</p>
+                    <button class="clear-filters-btn" onclick="fetchCounselors(false)">Try Again</button>
+                </div>`;
+        }
+        showToast("Error", "Failed to load counselors", "error");
+    } finally {
+        if (fetchToken === counselorFetchToken) counselorLoading = false;
+        hideLoading();
+    }
+}
+
+function renderFilteredCounselors() {
+    const counselors = getFilteredCounselors();
+    displayCounselors(counselors, { total: counselors.length, allTotal: allCounselors.length });
+}
+
+function applyCounselorFilters(patch = {}) {
+    counselorPage = 1;
+    syncFilterState(patch);
+    renderFilteredCounselors();
+}
+
+function clearCounselorFilters() {
+    filters = { ...DEFAULT_FILTERS };
+    Object.entries(filterControls).forEach(([key, id]) => {
+        const control = document.getElementById(id);
+        if (control) control.value = filters[key];
+    });
+    counselorPage = 1;
+    memoizedFilterKey = "";
+    renderFilteredCounselors();
+}
+
+function loadMoreCounselors() {
+    renderFilteredCounselors();
+}
+
+async function maybeShowRatingModal(counselorId, counselorName, messageCount) {
+    if (!counselorId || messageCount < 10) return;
+    const modalKey = `ratingPromptShown:${counselorId}`;
+    if (sessionStorage.getItem(modalKey)) return;
+
+    try {
+        const data = await window.RatingService.check(counselorId);
+        if (!data.success || data.hasRated) return;
+        sessionStorage.setItem(modalKey, "1");
+        counselorRatingModal?.open({ counselorId, counselorName });
+    } catch (error) {
+        console.error("Rating check failed:", error);
+    }
+}
+
+function openRatingModal(counselorId, counselorName) {
+    counselorRatingModal?.open({ counselorId, counselorName });
+}
+
+function closeRatingModal() {
+    document.getElementById("ratingModal")?.classList.remove("show");
+}
+
+async function submitCounselorRating() {
+    counselorRatingModal?.submit();
+}
+
+function checkCounselorStatus() {
+    return fetchCounselors(true);
+}
+
+function initializeSocket() {
+    socket = io({ auth: { userId: "<%= user._id %>", role: "student" } });
+
+    socket.on("connect", () => fetchCounselors(true));
+    socket.on("online-users", () => fetchCounselors(true));
+    socket.on("counselor-list-update", () => fetchCounselors(true));
+    socket.on("counselorProfileUpdated", () => fetchCounselors(true));
+
+    socket.on("counselor-rating-updated", (payload) => {
+        updateCardRating(payload.counselorId, payload.avgRating, payload.totalRatings);
+        fetchCounselors(true);
+    });
+
+    socket.on("ratingPrompt", (payload) => {
+        const counselorId = payload?.counselorId || sessionStorage.getItem("currentCounselorId");
+        const counselorName = sessionStorage.getItem("currentCounselorName") || "your counselor";
+        maybeShowRatingModal(counselorId, counselorName, payload?.messageCount || 10);
+    });
+
+    socket.on("recommendations-refresh", () => loadDashboardRecommendations(true));
+}
+
+function updateCounselorStatus(isOnline, count) {
+    const statusEl = document.getElementById("counselorStatus");
+    const statEl = document.getElementById("onlineCounselorCountStat");
+    if (statEl) statEl.textContent = count;
+    if (!statusEl) return;
+    if (isOnline) {
+        statusEl.className = "counselor-status-badge counselor-online";
+        statusEl.innerHTML = `<span class="realtime-indicator"></span><span class="fw-bold">${count} Counselor${count > 1 ? "s" : ""} Online</span>`;
+    } else {
+        statusEl.className = "counselor-status-badge counselor-offline";
+        statusEl.innerHTML = `<span class="realtime-indicator" style="background:#6c757d;animation:none;"></span><span>Offline - Chatbot Active</span>`;
+    }
+}
+
+function displayCounselors(counselors, pagination = {}) {
+    const grid = document.getElementById("counselorsGrid");
+    const countEl = document.getElementById("onlineCounselorCount");
+    const meta = document.getElementById("counselorResultsMeta");
+    const total = pagination.total ?? counselors.length;
+    const allTotal = pagination.allTotal ?? allCounselors.length;
+    const onlineCount = counselors.filter(isCounselorOnline).length;
+
+    if (countEl) countEl.textContent = total;
+    updateCounselorStatus(onlineCount > 0, onlineCount);
+    if (meta) {
+        meta.textContent = `${total} matching counselor${total === 1 ? "" : "s"} of ${allTotal} total - ${onlineCount} online now`;
+    }
+
+    if (!grid) return;
+    if (!counselors.length) {
+        grid.innerHTML = `
+            <div class="empty-state" style="grid-column:1/-1;">
+                <div class="empty-state-icon"><i class="fas fa-user-check"></i></div>
+                <h5 style="font-family:'Sora',sans-serif;font-weight:700;color:#1a2639;margin-bottom:8px;">No counselors found</h5>
+                <p style="color:#94a3b8;margin-bottom:20px;">Try a broader education, specialization, rating, availability, or search filter.</p>
+                <button class="clear-filters-btn" onclick="clearCounselorFilters()">
+                    <i class="fas fa-filter-circle-xmark me-1"></i>Clear Filters
+                </button>
+            </div>`;
+        return;
+    }
+
+    const html = counselors.map(c => {
+        const fullName = escapeHTML(getCounselorName(c) || "Counselor");
+        const firstNameOnly = escapeHTML(c.firstName || "Counselor");
+        const photo = c.profilePhoto?.startsWith("/") ? c.profilePhoto : `/uploads/images/${c.profilePhoto || "default-avatar.png"}`;
+        const rating = getCounselorRating(c);
+        const totalRatings = normalizeNumber(c.totalRatings ?? c.totalReviews, 0);
+        const specializationText = toValueList(c.specialization)[0] || toValueList(c.skills)[0] || "Student Wellness";
+        const educationText = c.education || c.qualification || "Counseling Psychology";
+        const skills = Array.isArray(c.skills) ? c.skills.slice(0, 3).join(", ") : "";
+        const statusLabel = isCounselorOnline(c) ? (isCounselorAvailableNow(c) ? "Available Now" : "Busy") : (c.statusLabel === "Away" ? "Away" : "Offline");
+        const labelClass = isCounselorOnline(c) ? "label-online" : "label-offline";
+        const dotClass = isCounselorOnline(c) ? "dot-online" : "dot-offline";
+        const cardClass = isCounselorOnline(c) ? "" : "counselor-offline-card";
+
+        return `
+        <div data-counselor-id="${escapeHTML(c._id)}">
+            <div class="card ${cardClass}" onclick="viewCounselorProfile('${escapeHTML(c._id)}')">
+                <div class="card-body">
+                    <div class="avatar-wrap">
+                        <img src="${escapeHTML(photo)}" class="rounded-circle" width="88" height="88" alt="${fullName}" onerror="this.src='/images/default-avatar.png'">
+                        <span class="counselor-status-dot ${dotClass}"></span>
+                    </div>
+                    <h5>${fullName}</h5>
+                    <div class="mb-1">
+                        <span class="online-status-label ${labelClass}">
+                            <i class="fas fa-circle" style="font-size:6px;"></i>${statusLabel}
+                        </span>
+                    </div>
+                    <div class="specialization-badge">${escapeHTML(specializationText)}</div>
+                    <div class="education-text"><i class="fas fa-graduation-cap"></i>${escapeHTML(educationText)}</div>
+                    ${skills ? `<div class="education-text"><i class="fas fa-sparkles"></i>${escapeHTML(skills)}</div>` : ""}
+                    <div class="counselor-rating" aria-label="Average rating ${rating}">
+                        ${generateStars(rating)}
+                        <span style="font-size:.78rem;color:#64748b;margin-left:6px;font-weight:700;">${rating ? rating.toFixed(1) : "New"} (${totalRatings})</span>
+                    </div>
+                    <button class="btn-chat ${!isCounselorOnline(c) ? "btn-chat-offline" : ""}"
+                        onclick="event.stopPropagation(); startChat('${escapeHTML(c._id)}', '${fullName.replace(/'/g, "\\'")}', ${isCounselorOnline(c)})">
+                        <i class="fas fa-comment-dots"></i>Chat with ${firstNameOnly}
+                    </button>
+                </div>
+            </div>
+        </div>`;
+    }).join("");
+
+    grid.innerHTML = html + (counselorHasMore ? `
+        <div style="grid-column:1/-1;text-align:center;padding:8px 0 4px;">
+            <button class="load-more-btn" onclick="loadMoreCounselors()">
+                <i class="fas fa-chevron-down me-1"></i>Load More Counselors
+            </button>
+        </div>` : "");
+    observeCards();
+}
+
+function updateCardRating(counselorId, newAvg, totalRatings) {
+    const counselor = allCounselors.find(item => String(item._id) === String(counselorId));
+    if (counselor) {
+        counselor.rating = normalizeNumber(newAvg, counselor.rating || 0);
+        if (totalRatings !== undefined) counselor.totalRatings = totalRatings;
+    }
+    memoizedFilterKey = "";
+    renderFilteredCounselors();
+}
+
+function searchCounselors() {
+    applyCounselorFilters();
+}
+
+document.addEventListener("keydown", function(e) {
+    if (e.ctrlKey && e.key === "k") {
+        e.preventDefault();
+        document.getElementById("searchCounselors")?.focus();
+    }
 });
 </script>
 

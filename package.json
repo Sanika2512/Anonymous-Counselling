@@ -2,9 +2,10 @@
   "name": "student-health-system",
   "version": "1.0.0",
   "description": "",
-  "main": "init/index.js",
+  "main": "server/init/index.js",
   "scripts": {
-    "start": "node init/index.js",
+    "start": "node server/init/index.js",
+    "seed:dev": "node server/utils/seedDevUser.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

@@ -62,25 +62,41 @@
 
                     <% } else { %>
                         <!-- logged in -->
+                        <% const dashboardHref = currentUser.role === 'admin' ? '/admin' : `/${currentUser.role}-dashboard`; %>
                         <li class="nav-item">
-                            <a class="nav-link" href="/<%= currentUser.role %>-dashboard">
+                            <a class="nav-link" href="<%= dashboardHref %>">
                                 <i class="fas fa-tachometer-alt me-1"></i>Dashboard
                             </a>
                         </li>
+                        <% if (currentUser.role !== 'admin' && currentUser.role !== 'super_admin') { %>
+                        <li class="nav-item">
+                            <a class="nav-link <%= currentUrl === '/confession-wall' ? 'active' : '' %>" href="/confession-wall">
+                                <i class="fas fa-comments me-1"></i>Support Wall
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <button class="btn btn-link nav-link position-relative" type="button" id="wallNotificationBell" aria-label="Wall notifications">
+                                <i class="fas fa-bell"></i>
+                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger d-none" id="wallNotificationCount">0</span>
+                            </button>
+                        </li>
+                        <% } %>
 
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
                                 <i class="fas fa-user-circle me-1"></i>
-                                <%= currentUser.username %>
+                                <%= currentUser.username || currentUser.email %>
 
                                 <% if (currentUser.role === 'counselor') { %>
                                     <span class="badge bg-success ms-1">Online</span>
+                                <% } else if (currentUser.role === 'admin') { %>
+                                    <span class="badge bg-warning text-dark ms-1">Admin</span>
                                 <% } %>
                             </a>
 
                             <ul class="dropdown-menu dropdown-menu-end">
                                 <li>
-                                    <a class="dropdown-item" href="/<%= currentUser.role %>-dashboard">
+                                    <a class="dropdown-item" href="<%= dashboardHref %>">
                                         <i class="fas fa-tachometer-alt me-2"></i>Dashboard
                                     </a>
                                 </li>

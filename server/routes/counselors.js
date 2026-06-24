@@ -49,7 +49,7 @@ router.get("/online", async (req, res) => {
         const counselors = await User.find({
             role: "counselor",
             isOnline: true
-        }).select("firstName lastName profilePhoto specialization education isOnline");
+        }).select("firstName lastName profilePhoto specialization education qualification skills isOnline rating totalRatings totalReviews lastSeen");
 
         res.json({
             success: true,
@@ -64,19 +64,182 @@ router.get("/online", async (req, res) => {
     }
 });
 
-// GET ALL COUNSELORS (online + offline)
+function toArray(value) {
+    if (!value) return [];
+    if (Array.isArray(value)) return value.filter(Boolean);
+    return String(value).split(",").map(item => item.trim()).filter(Boolean);
+}
+
+function escapeRegex(value) {
+    return String(value).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function formatCounselor(c) {
+    const obj = c.toObject ? c.toObject() : c;
+    return {
+        ...obj,
+        profilePhoto: obj.profilePhoto || "default.png",
+        totalRatings: obj.totalRatings || obj.totalReviews || 0,
+        rating: obj.rating || 0,
+        statusLabel: obj.isOnline
+            ? "Online Now"
+            : (obj.lastSeen && new Date(obj.lastSeen).toDateString() === new Date().toDateString() ? "Away" : "Offline")
+    };
+}
+
+// GET ALL COUNSELORS (search + filters + sorting + pagination)
 router.get('/all', isLoggedIn, async (req, res) => {
     try {
-        const counselors = await User.find({ role: 'counselor' })
-            .select('firstName lastName profilePhoto specialization education rating isOnline')
-            .sort({ isOnline: -1, firstName: 1 }); // online first, then alphabetical
+        const {
+            search = "",
+            availability = "",
+            minRating = "",
+            sort = "online",
+            page = 1,
+            limit = 12
+        } = req.query;
+        const educations = toArray(req.query.education);
+        const specializations = toArray(req.query.specialization);
+        const numericLimit = Math.min(Math.max(parseInt(limit, 10) || 12, 1), 50);
+        const numericPage = Math.max(parseInt(page, 10) || 1, 1);
+        const query = { role: "counselor" };
+
+        const trimmedSearch = String(search || "").trim();
+        if (trimmedSearch) {
+            const regex = new RegExp(escapeRegex(trimmedSearch), "i");
+            query.$or = [
+                { firstName: regex },
+                { lastName: regex },
+                { username: regex },
+                { email: regex },
+                { qualification: regex },
+                { education: regex },
+                { specialization: regex },
+                { skills: regex },
+                { bio: regex }
+            ];
+        }
+
+        if (educations.length) {
+            query.education = { $in: educations.map(item => new RegExp(`^${escapeRegex(item)}$`, "i")) };
+        }
+
+        if (specializations.length) {
+            query.specialization = { $in: specializations.map(item => new RegExp(escapeRegex(item), "i")) };
+        }
+
+        if (minRating) {
+            query.rating = { $gte: Number(minRating) };
+        }
+
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        if (availability === "online") {
+            query.isOnline = true;
+        } else if (availability === "offline") {
+            query.isOnline = { $ne: true };
+        } else if (availability === "availableNow" || availability === "busy") {
+            query.isOnline = true;
+        } else if (availability === "today") {
+            const searchOr = query.$or;
+            delete query.$or;
+            query.$and = [
+                ...(searchOr ? [{ $or: searchOr }] : []),
+                { $or: [{ isOnline: true }, { lastSeen: { $gte: today } }] }
+            ];
+        }
+
+        const sortOptions = {
+            highestRated: { rating: -1, totalRatings: -1, isOnline: -1 },
+            lowestRated: { rating: 1, totalRatings: -1, isOnline: -1 },
+            mostReviewed: { totalRatings: -1, totalReviews: -1, rating: -1 },
+            mostExperienced: { totalRatings: -1, totalReviews: -1, rating: -1 },
+            newestAdded: { createdAt: -1 },
+            recentlyActive: { lastSeen: -1, isOnline: -1 },
+            online: { isOnline: -1, lastSeen: -1, rating: -1 },
+            onlineFirst: { isOnline: -1, lastSeen: -1, rating: -1 }
+        };
+        const sortBy = sortOptions[sort] || sortOptions.online;
+
+        const pipeline = [
+            { $match: query },
+            {
+                $lookup: {
+                    from: 'issues',
+                    let: { counselorId: '$_id' },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        { $eq: ['$counselorId', '$$counselorId'] },
+                                        { $in: ['$status', ['open', 'in-progress']] }
+                                    ]
+                                }
+                            }
+                        },
+                        { $count: 'count' }
+                    ],
+                    as: 'activeIssuesData'
+                }
+            },
+            {
+                $addFields: {
+                    activeIssues: {
+                        $ifNull: [{ $arrayElemAt: ['$activeIssuesData.count', 0] }, 0]
+                    },
+                    available: {
+                        $lt: [{ $ifNull: [{ $arrayElemAt: ['$activeIssuesData.count', 0] }, 0] }, 5]
+                    }
+                }
+            }
+        ];
+
+        if (availability === 'availableNow') {
+            pipeline.push({ $match: { available: true } });
+        } else if (availability === 'busy') {
+            pipeline.push({ $match: { available: false } });
+        }
+
+        pipeline.push({ $project: {
+            firstName: 1,
+            lastName: 1,
+            username: 1,
+            profilePhoto: 1,
+            specialization: 1,
+            education: 1,
+            qualification: 1,
+            skills: 1,
+            rating: 1,
+            totalRatings: 1,
+            totalReviews: 1,
+            isOnline: 1,
+            lastSeen: 1,
+            bio: 1,
+            createdAt: 1,
+            activeIssues: 1,
+            available: 1
+        } });
+
+        const countPipeline = [...pipeline].filter(stage => !('$sort' in stage) && !('$skip' in stage) && !('$limit' in stage));
+        countPipeline.push({ $count: 'total' });
+
+        const [counselors, countResult] = await Promise.all([
+            User.aggregate([...pipeline, { $sort: sortBy }, { $skip: (numericPage - 1) * numericLimit }, { $limit: numericLimit }]),
+            User.aggregate(countPipeline)
+        ]);
+
+        const total = countResult[0]?.total || 0;
 
         res.json({
             success: true,
-            counselors: counselors.map(c => ({
-                ...c.toObject(),
-                profilePhoto: c.profilePhoto || "default.png"
-            }))
+            counselors: counselors.map(formatCounselor),
+            pagination: {
+                page: numericPage,
+                limit: numericLimit,
+                total,
+                hasMore: numericPage * numericLimit < total
+            }
         });
     } catch (err) {
         console.error('Get all counselors error:', err);

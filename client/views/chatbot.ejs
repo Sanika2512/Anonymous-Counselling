@@ -204,6 +204,89 @@
       padding: 8px 20px;
       background: #fff;
     }
+
+    @media (max-width: 640px) {
+      body {
+        padding: 0;
+        align-items: stretch;
+      }
+
+      .chat-wrapper {
+        height: 100dvh;
+        max-width: none;
+        border-radius: 0;
+      }
+
+      .chat-header {
+        padding: 14px 16px;
+      }
+
+      .avatar {
+        width: 42px;
+        height: 42px;
+        flex: 0 0 auto;
+      }
+
+      .header-info {
+        min-width: 0;
+      }
+
+      .header-info h2,
+      .header-info p {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .chat-messages {
+        padding: 14px 12px;
+        gap: 10px;
+      }
+
+      .message {
+        max-width: 94%;
+      }
+
+      .msg-avatar {
+        width: 30px;
+        height: 30px;
+      }
+
+      .bubble {
+        padding: 10px 12px;
+        font-size: 0.92rem;
+      }
+
+      .chat-input-area {
+        padding: 10px 12px max(10px, env(safe-area-inset-bottom));
+        gap: 8px;
+      }
+
+      #userInput {
+        min-width: 0;
+        font-size: 16px;
+      }
+
+      #sendBtn {
+        width: 46px;
+        height: 46px;
+      }
+    }
+
+    @media (orientation: landscape) and (max-height: 520px) {
+      body {
+        padding: 0;
+      }
+
+      .chat-wrapper {
+        height: 100dvh;
+        border-radius: 0;
+      }
+
+      .chat-header {
+        padding: 10px 14px;
+      }
+    }
   </style>
 </head>
 <body>

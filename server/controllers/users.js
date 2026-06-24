@@ -58,7 +58,9 @@ module.exports.signup = async (req, res, next) => {
 module.exports.login = (req, res) => {
   req.flash("success", "Welcome to Anonymous Counselling!");
 
-  if (req.user.role === "student") {
+  if (req.user.role === "admin") {
+    res.redirect("/admin");
+  } else if (req.user.role === "student") {
     res.redirect("/student-dashboard");
   } else {
     res.redirect("/counselor-dashboard");

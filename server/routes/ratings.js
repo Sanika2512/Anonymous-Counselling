@@ -4,33 +4,29 @@ const Rating = require("../models/Rating");
 const User = require("../models/User");
 const { isLoggedIn } = require("../middleware/auth");
 
-// ─── HELPER: Recalculate and save counselor rating stats ───
-// Only called on first-time rating OR when we need to sync.
-// For updates, we use the delta approach (much faster).
 async function syncCounselorRating(counselorId) {
     const ratings = await Rating.find({ counselor: counselorId, websiteReview: false });
     const totalRatings = ratings.length;
     const sumRatings = ratings.reduce((sum, r) => sum + r.rating, 0);
     const averageRating = totalRatings > 0 ? Math.round((sumRatings / totalRatings) * 10) / 10 : 0;
 
-    await User.findByIdAndUpdate(counselorId, { totalRatings, sumRatings, rating: averageRating });
+    await User.findByIdAndUpdate(counselorId, {
+        totalRatings,
+        totalReviews: totalRatings,
+        sumRatings,
+        rating: averageRating
+    });
+
     return { totalRatings, sumRatings, averageRating };
 }
 
-/*
-=====================================
-POST /api/ratings/counselor
-One rating per student per counselor.
-Updates existing rating using delta math — no full recalculation.
-=====================================
-*/
 router.post("/counselor", isLoggedIn, async (req, res) => {
     try {
-        const { counselorId, rating } = req.body;
+        const { counselorId, rating, feedback = "" } = req.body;
         const studentId = req.user._id;
+        const numericRating = Number(rating);
 
-        // Validate inputs
-        if (!counselorId || !rating || rating < 1 || rating > 5) {
+        if (!counselorId || !numericRating || numericRating < 1 || numericRating > 5) {
             return res.status(400).json({ success: false, message: "Rating must be between 1 and 5" });
         }
 
@@ -39,75 +35,69 @@ router.post("/counselor", isLoggedIn, async (req, res) => {
             return res.status(404).json({ success: false, message: "Counselor not found" });
         }
 
-        // Check if student already rated this counselor
         const existingRating = await Rating.findOne({
             student: studentId,
             counselor: counselorId,
             websiteReview: false
         });
 
-        let totalRatings = counselor.totalRatings || 0;
-        let sumRatings = counselor.sumRatings || 0;
-
         if (existingRating) {
-            // ── UPDATE PATH: use delta math, no full recalculation ──
-            const oldRating = existingRating.rating;
-            const delta = rating - oldRating; // e.g. was 3, now 5 → delta = +2
-
-            existingRating.rating = rating;
-            await existingRating.save();
-
-            sumRatings = sumRatings + delta;
-            // totalRatings stays the same — same student, just updating
-        } else {
-            // ── NEW RATING PATH ──
-            await Rating.create({
-                student: studentId,
-                counselor: counselorId,
-                rating,
-                websiteReview: false
+            return res.status(409).json({
+                success: false,
+                hasRated: true,
+                message: "You have already rated this counselor"
             });
-
-            totalRatings = totalRatings + 1;
-            sumRatings = sumRatings + rating;
         }
 
-        // Calculate new average
-        const averageRating = totalRatings > 0
-            ? Math.round((sumRatings / totalRatings) * 10) / 10
-            : 0;
+        await Rating.create({
+            student: studentId,
+            counselor: counselorId,
+            rating: numericRating,
+            feedback: String(feedback || "").trim().slice(0, 1000),
+            websiteReview: false
+        });
 
-        // Save updated stats back to counselor document
+        const totalRatings = (counselor.totalRatings || counselor.totalReviews || 0) + 1;
+        const sumRatings = (counselor.sumRatings || 0) + numericRating;
+        const averageRating = Math.round((sumRatings / totalRatings) * 10) / 10;
+
         await User.findByIdAndUpdate(counselorId, {
             totalRatings,
+            totalReviews: totalRatings,
             sumRatings,
             rating: averageRating
         });
 
+        const io = req.app.get("io");
+        if (io) {
+            const ratingPayload = {
+                counselorId: counselorId.toString(),
+                avgRating: averageRating,
+                totalRatings
+            };
+            io.emit("counselor-rating-updated", ratingPayload);
+            io.emit("counselor-list-update", ratingPayload);
+        }
+
         return res.json({
             success: true,
-            message: existingRating ? "Rating updated" : "Rating submitted",
-            isUpdate: !!existingRating,
+            message: "Rating submitted",
             avgRating: averageRating,
             totalRatings
         });
-
     } catch (err) {
-        // Handle race condition: duplicate key error (two simultaneous first-time ratings)
         if (err.code === 11000) {
-            return res.status(409).json({ success: false, message: "Rating conflict. Please try again." });
+            return res.status(409).json({
+                success: false,
+                hasRated: true,
+                message: "You have already rated this counselor"
+            });
         }
         console.error("Rating error:", err.message);
         return res.status(500).json({ success: false, message: "Error submitting rating" });
     }
 });
 
-/*
-=====================================
-GET /api/ratings/check/:counselorId
-Check if student already rated + return their rating
-=====================================
-*/
 router.get("/check/:counselorId", isLoggedIn, async (req, res) => {
     try {
         const existing = await Rating.findOne({
@@ -116,61 +106,43 @@ router.get("/check/:counselorId", isLoggedIn, async (req, res) => {
             websiteReview: false
         });
 
-        // Also fetch current average from counselor document (fast — single doc lookup)
-        const counselor = await User.findById(req.params.counselorId, "rating totalRatings");
+        const counselor = await User.findById(req.params.counselorId, "rating totalRatings totalReviews");
 
         return res.json({
             success: true,
             hasRated: !!existing,
             yourRating: existing?.rating || null,
+            feedback: existing?.feedback || "",
             avgRating: counselor?.rating || 0,
-            totalRatings: counselor?.totalRatings || 0
+            totalRatings: counselor?.totalRatings || counselor?.totalReviews || 0
         });
     } catch (err) {
         return res.status(500).json({ success: false, message: err.message });
     }
 });
 
-/*
-=====================================
-GET /api/ratings/counselor/:counselorId
-Get full rating stats for a counselor (for profile page)
-=====================================
-*/
 router.get("/counselor/:counselorId", async (req, res) => {
     try {
         const counselor = await User.findById(
             req.params.counselorId,
-            "firstName lastName rating totalRatings sumRatings"
+            "firstName lastName rating totalRatings totalReviews sumRatings"
         );
         if (!counselor) {
             return res.status(404).json({ success: false, message: "Counselor not found" });
         }
 
-        // Build star distribution (1★ to 5★ counts) for display
         const distribution = await Rating.aggregate([
-            {
-                $match: {
-                    counselor: counselor._id,
-                    websiteReview: false
-                }
-            },
-            {
-                $group: {
-                    _id: "$rating",
-                    count: { $sum: 1 }
-                }
-            }
+            { $match: { counselor: counselor._id, websiteReview: false } },
+            { $group: { _id: "$rating", count: { $sum: 1 } } }
         ]);
 
-        // Format: { 1: 0, 2: 3, 3: 5, 4: 12, 5: 20 }
         const starDistribution = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
         distribution.forEach(d => { starDistribution[d._id] = d.count; });
 
         return res.json({
             success: true,
             avgRating: counselor.rating || 0,
-            totalRatings: counselor.totalRatings || 0,
+            totalRatings: counselor.totalRatings || counselor.totalReviews || 0,
             starDistribution
         });
     } catch (err) {
@@ -178,12 +150,6 @@ router.get("/counselor/:counselorId", async (req, res) => {
     }
 });
 
-/*
-=====================================
-POST /api/ratings/website
-Website homepage review (one per user)
-=====================================
-*/
 router.post("/website", isLoggedIn, async (req, res) => {
     try {
         const { rating, reviewText } = req.body;
@@ -196,7 +162,6 @@ router.post("/website", isLoggedIn, async (req, res) => {
             return res.status(400).json({ success: false, message: "Review text is required" });
         }
 
-        // upsert: update if exists, create if not
         await Rating.findOneAndUpdate(
             { student: studentId, counselor: studentId, websiteReview: true },
             { rating, reviewText: reviewText.trim() },
@@ -210,12 +175,6 @@ router.post("/website", isLoggedIn, async (req, res) => {
     }
 });
 
-/*
-=====================================
-GET /api/ratings/website/check
-Must be BEFORE /website/:id to avoid route conflict
-=====================================
-*/
 router.get("/website/check", isLoggedIn, async (req, res) => {
     try {
         const existing = await Rating.findOne({
@@ -233,12 +192,6 @@ router.get("/website/check", isLoggedIn, async (req, res) => {
     }
 });
 
-/*
-=====================================
-GET /api/ratings/website
-Get all homepage reviews
-=====================================
-*/
 router.get("/website", async (req, res) => {
     try {
         const reviews = await Rating.find({ websiteReview: true, reviewText: { $ne: "" } })
@@ -261,12 +214,6 @@ router.get("/website", async (req, res) => {
     }
 });
 
-/*
-=====================================
-PUT /api/ratings/website/:id
-Edit own homepage review
-=====================================
-*/
 router.put("/website/:id", isLoggedIn, async (req, res) => {
     try {
         const { rating, reviewText } = req.body;
@@ -287,12 +234,6 @@ router.put("/website/:id", isLoggedIn, async (req, res) => {
     }
 });
 
-/*
-=====================================
-DELETE /api/ratings/website/:id
-Delete own homepage review
-=====================================
-*/
 router.delete("/website/:id", isLoggedIn, async (req, res) => {
     try {
         const review = await Rating.findById(req.params.id);
@@ -308,12 +249,6 @@ router.delete("/website/:id", isLoggedIn, async (req, res) => {
     }
 });
 
-/*
-=====================================
-POST /api/ratings/sync/:counselorId  (Admin utility)
-Force-recalculate from all records if stats drift
-=====================================
-*/
 router.post("/sync/:counselorId", isLoggedIn, async (req, res) => {
     try {
         const result = await syncCounselorRating(req.params.counselorId);

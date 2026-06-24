@@ -511,6 +511,197 @@
         gap: 15px;
     }
 
+    .support-wall-section {
+        padding: 80px 0;
+        background:
+            radial-gradient(circle at top left, rgba(107, 140, 255, 0.16), transparent 34%),
+            linear-gradient(135deg, #f8fbff 0%, #eef7f4 100%);
+    }
+
+    .wall-shell {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 320px;
+        gap: 24px;
+        align-items: start;
+    }
+
+    .wall-toolbar,
+    .wall-card,
+    .wall-sidebar-panel {
+        background: rgba(255,255,255,0.78);
+        border: 1px solid rgba(107,140,255,0.18);
+        border-radius: 20px;
+        box-shadow: 0 18px 45px rgba(62, 89, 132, 0.12);
+        backdrop-filter: blur(14px);
+    }
+
+    .wall-toolbar {
+        padding: 18px;
+        margin-bottom: 18px;
+    }
+
+    .wall-grid {
+        display: grid;
+        gap: 18px;
+    }
+
+    .wall-card {
+        padding: 22px;
+        animation: slideInUp 0.35s ease both;
+    }
+
+    .wall-card-header,
+    .wall-actions,
+    .wall-reply-meta {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .wall-anon {
+        font-weight: 800;
+        color: #1a2b4c;
+    }
+
+    .wall-chip {
+        border-radius: 999px;
+        padding: 6px 11px;
+        font-size: 0.76rem;
+        font-weight: 700;
+        background: #eef6ff;
+        color: #2563eb;
+    }
+
+    .wall-chip.resolved {
+        background: #dcfce7;
+        color: #15803d;
+    }
+
+    .wall-chip.distressed {
+        background: #fee2e2;
+        color: #b91c1c;
+    }
+
+    .wall-chip.positive {
+        background: #dcfce7;
+        color: #15803d;
+    }
+
+    .wall-card h3 {
+        font-size: 1.25rem;
+        margin: 14px 0 8px;
+        color: #14213d;
+    }
+
+    .wall-card p {
+        color: #52627a;
+        line-height: 1.65;
+    }
+
+    .wall-media {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+        gap: 10px;
+        margin: 14px 0;
+    }
+
+    .wall-media img,
+    .wall-media video {
+        width: 100%;
+        border-radius: 14px;
+        max-height: 240px;
+        object-fit: cover;
+        background: #0f172a;
+    }
+
+    .wall-recommendations {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin: 12px 0;
+    }
+
+    .wall-action-btn {
+        border: 1px solid #dbe5f5;
+        background: #fff;
+        color: #1f2f46;
+        border-radius: 999px;
+        padding: 8px 12px;
+        font-weight: 700;
+        font-size: 0.82rem;
+    }
+
+    .wall-action-btn.active {
+        background: #2563eb;
+        color: #fff;
+        border-color: #2563eb;
+    }
+
+    .wall-replies {
+        border-top: 1px solid #e5edf7;
+        margin-top: 16px;
+        padding-top: 14px;
+        display: grid;
+        gap: 10px;
+    }
+
+    .wall-reply {
+        background: #f8fbff;
+        border: 1px solid #e4edf8;
+        border-radius: 14px;
+        padding: 12px;
+        margin-left: var(--reply-indent, 0);
+    }
+
+    .wall-reply.counselor {
+        background: #ecfdf5;
+        border-color: #bbf7d0;
+    }
+
+    .wall-sidebar {
+        display: grid;
+        gap: 16px;
+        position: sticky;
+        top: 90px;
+    }
+
+    .wall-sidebar-panel {
+        padding: 18px;
+    }
+
+    .wall-stat {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 0;
+        border-bottom: 1px solid #e5edf7;
+    }
+
+    .wall-stat:last-child {
+        border-bottom: 0;
+    }
+
+    .wall-empty {
+        text-align: center;
+        padding: 42px;
+        color: #64748b;
+        border: 2px dashed rgba(107,140,255,0.24);
+        border-radius: 18px;
+        background: rgba(255,255,255,0.7);
+    }
+
+    @media (max-width: 992px) {
+        .wall-shell {
+            grid-template-columns: 1fr;
+        }
+
+        .wall-sidebar {
+            position: static;
+        }
+    }
+
     .author-avatar {
         width: 50px;
         height: 50px;
@@ -654,6 +845,121 @@
         
         .stat-number {
             font-size: 2rem;
+        }
+    }
+
+    /* Device adaptation */
+    .hero-wrapper,
+    .hero-content,
+    .wall-shell,
+    .wall-feed,
+    .wall-sidebar,
+    .wall-sidebar-panel,
+    .support-wall-card,
+    .modal-content {
+        min-width: 0;
+    }
+
+    .hero-title,
+    .hero-subtitle,
+    .support-wall-card,
+    .wall-sidebar-panel,
+    .mood-message {
+        overflow-wrap: anywhere;
+    }
+
+    .hero-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .hero-buttons .btn,
+    .btn-primary-calm,
+    .btn-outline-calm {
+        min-height: 46px;
+    }
+
+    .wall-shell {
+        width: 100%;
+    }
+
+    .wall-sidebar {
+        min-width: 0;
+    }
+
+    .mood-message {
+        white-space: normal;
+        width: min(280px, calc(100vw - 32px));
+    }
+
+    @media (max-width: 992px) {
+        .hero-wrapper {
+            min-height: auto;
+            padding: 56px 0 36px;
+        }
+
+        .hero-content .row {
+            gap: 24px;
+        }
+
+        .wall-sidebar {
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        }
+    }
+
+    @media (max-width: 768px) {
+        .hero-title {
+            font-size: clamp(2rem, 10vw, 2.5rem);
+            line-height: 1.1;
+        }
+
+        .hero-subtitle {
+            font-size: 1rem;
+        }
+
+        .hero-buttons .btn,
+        .btn-primary-calm,
+        .btn-outline-calm {
+            width: 100%;
+            margin-left: 0 !important;
+        }
+
+        .support-wall-section,
+        .wall-shell {
+            padding-left: 0;
+            padding-right: 0;
+        }
+
+        .wall-sidebar {
+            grid-template-columns: 1fr;
+        }
+
+        .mood-booster {
+            right: 16px;
+            bottom: max(16px, env(safe-area-inset-bottom));
+        }
+
+        .breathing-exercise {
+            left: 16px;
+            bottom: max(16px, env(safe-area-inset-bottom));
+        }
+    }
+
+    @media (max-width: 480px) {
+        .mood-btn,
+        .breathing-btn {
+            width: 48px;
+            height: 48px;
+            font-size: 1.05rem;
+        }
+
+        .mood-message {
+            right: -8px;
+            bottom: 62px;
+            padding: 12px 14px;
+            border-radius: 16px;
         }
     }
 </style>
@@ -856,64 +1162,77 @@
     </div>
 </div>
 
-<!-- Testimonials Section -->
-<section class="testimonial-section">
-
-
-<div class="container">
-    <div class="text-center mb-5">
-        <h2 class="fw-bold" style="color:#1a2639;">What Our Users Say</h2>
-        <p class="text-muted">Real experiences from students who found support here</p>
-    </div>
-
-    <div class="row g-4 mb-5" id="reviewsGrid">
-        <div class="col-12 text-center py-4">
-            <div class="spinner-border text-primary" role="status"></div>
-        </div>
-    </div>
-
-    <% if (locals.currentUser) { %>
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-                 <div style="background:linear-gradient(135deg,#ffffff,#f5f9ff);border-radius:28px;padding:32px;border:1px solid rgba(107,140,255,0.2);box-shadow:0 20px 50px rgba(107,140,255,0.12);">
-                <h5 class="fw-bold mb-1 text-center">Share Your Experience</h5>
-                <p class="text-muted text-center small mb-3">Your review helps others find support</p>
-                <div class="d-flex justify-content-center gap-2 mb-3" id="reviewStarRow">
-                    <i class="fas fa-star review-star" data-val="1" style="font-size:2.2rem;color:#d1d5db;cursor:pointer;transition:color .15s,transform .15s;"></i>
-                    <i class="fas fa-star review-star" data-val="2" style="font-size:2.2rem;color:#d1d5db;cursor:pointer;transition:color .15s,transform .15s;"></i>
-                    <i class="fas fa-star review-star" data-val="3" style="font-size:2.2rem;color:#d1d5db;cursor:pointer;transition:color .15s,transform .15s;"></i>
-                    <i class="fas fa-star review-star" data-val="4" style="font-size:2.2rem;color:#d1d5db;cursor:pointer;transition:color .15s,transform .15s;"></i>
-                    <i class="fas fa-star review-star" data-val="5" style="font-size:2.2rem;color:#d1d5db;cursor:pointer;transition:color .15s,transform .15s;"></i>
-                </div>
-                <textarea id="reviewText" class="form-control mb-3" rows="3" placeholder="Tell us about your experience..." style="border-radius:12px;border:1.5px solid #e2e8f0;resize:none;"></textarea>
-                
-                <!-- Find this button and add the id -->
-               <button 
-                    id="reviewSubmitBtn"
-                    onclick="submitWebsiteReview()" 
-                    style="background:linear-gradient(135deg,#667eea,#764ba2);color:white;border:none;border-radius:30px;padding:12px;font-weight:600;width:100%;cursor:pointer;">
-                    <i class="fas fa-paper-plane me-2"></i>Submit Review
-             </button>
-
-                <div id="reviewSuccessMsg" style="display:none;text-align:center;margin-top:14px;color:#10b981;font-weight:600;">
-                    <i class="fas fa-check-circle me-1"></i>Thank you for your review!
-                </div>
-                <div id="reviewAlreadyMsg" style="display:none;text-align:center;margin-top:14px;color:#64748b;font-size:.9rem;">
-                    You've already reviewed this platform. Thank you! 🙏
-                </div>
+<!-- Anonymous Confession & Support Wall -->
+<section class="support-wall-section" id="support-wall">
+    <div class="container">
+        <div class="d-flex align-items-center justify-content-between gap-3 flex-wrap mb-4">
+            <div>
+                <span class="welcome-badge mb-3"><i class="fas fa-user-secret me-2"></i>Anonymous Confession & Support Wall</span>
+                <h2 class="fw-bold mb-2" style="color:#14213d;">Share Your Thoughts Safely, Get Support Anonymously</h2>
+                <p class="text-muted mb-0">Students and counselors can discuss stress, academics, college life, and support while student identities stay private.</p>
             </div>
+            <% if (locals.currentUser && locals.currentUser.role === 'student') { %>
+                <button class="btn btn-primary-calm" data-bs-toggle="modal" data-bs-target="#confessionModal">
+                    <i class="fas fa-plus me-2"></i>Create Post
+                </button>
+            <% } else if (!locals.currentUser) { %>
+                <a href="/login" class="btn btn-primary-calm"><i class="fas fa-lock me-2"></i>Login to Access Wall</a>
+            <% } %>
         </div>
+
+        <% if (locals.currentUser) { %>
+        <div class="wall-shell">
+            <div>
+                <div class="wall-toolbar">
+                    <div class="row g-2">
+                        <div class="col-lg-5"><input class="form-control" id="wallSearch" placeholder="Search discussions..." aria-label="Search posts"></div>
+                        <div class="col-lg-3"><select class="form-select" id="wallCategory"><option value="">All categories</option></select></div>
+                        <div class="col-lg-2"><select class="form-select" id="wallStatus"><option value="">All status</option><option value="unresolved">Unresolved</option><option value="resolved">Resolved</option></select></div>
+                        <div class="col-lg-2"><select class="form-select" id="wallSort"><option value="latest">Latest</option><option value="mostDiscussed">Most discussed</option><option value="mostHelpful">Most helpful</option></select></div>
+                    </div>
+                    <div class="d-flex gap-2 flex-wrap mt-3">
+                        <button class="wall-action-btn active" id="showAllPosts" type="button">All Posts</button>
+                        <button class="wall-action-btn" id="showSavedPosts" type="button"><i class="fas fa-bookmark me-1"></i>Saved Posts</button>
+                    </div>
+                </div>
+                <div class="wall-grid" id="confessionPosts"><div class="wall-empty"><div class="spinner-border text-primary" role="status"></div><p class="mt-3 mb-0">Loading anonymous discussions...</p></div></div>
+            </div>
+
+            <aside class="wall-sidebar">
+                <div class="wall-sidebar-panel">
+                    <h5 class="fw-bold mb-3"><i class="fas fa-chart-line me-2 text-primary"></i>Community Statistics</h5>
+                    <div class="wall-stat"><span>Total posts</span><strong id="wallStatPosts">0</strong></div>
+                    <div class="wall-stat"><span>Resolved</span><strong id="wallStatResolved">0</strong></div>
+                    <div class="wall-stat"><span>Replies</span><strong id="wallStatReplies">0</strong></div>
+                </div>
+                <div class="wall-sidebar-panel"><h5 class="fw-bold mb-3"><i class="fas fa-fire me-2 text-danger"></i>Trending Topics</h5><div id="wallTrending">Loading...</div></div>
+                <div class="wall-sidebar-panel"><h5 class="fw-bold mb-3"><i class="fas fa-star me-2 text-warning"></i>Most Helpful Posts</h5><div id="wallHelpful">Loading...</div></div>
+            </aside>
+        </div>
+        <% } else { %>
+            <div class="wall-empty"><i class="fas fa-lock fa-2x mb-3 text-primary"></i><h4 class="fw-bold">Authenticated support space</h4><p class="mb-0">Please log in as a student or counselor to view, create, reply, react, save, and receive real-time notifications.</p></div>
+        <% } %>
     </div>
-    <% } else { %>
-    <div class="text-center mt-2">
-        <p class="text-muted"><a href="/login" style="color:#667eea;font-weight:600;">Log in</a> to share your experience</p>
-    </div>
-    <% } %>
-</div>
-   
-   
 </section>
 
+<% if (locals.currentUser && locals.currentUser.role === 'student') { %>
+<div class="modal fade" id="confessionModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <form class="modal-content" id="confessionForm" style="border-radius:24px;border:0;">
+            <div class="modal-header bg-primary text-white" style="border-radius:24px 24px 0 0;"><h5 class="modal-title"><i class="fas fa-user-secret me-2"></i>Create Anonymous Post</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
+            <div class="modal-body p-4">
+                <div class="row g-3">
+                    <div class="col-md-8"><label class="form-label fw-semibold" for="confessionTitle">Title</label><input class="form-control" id="confessionTitle" name="title" maxlength="140" required></div>
+                    <div class="col-md-4"><label class="form-label fw-semibold" for="confessionCategory">Category</label><select class="form-select" id="confessionCategory" name="category"><option value="">Auto detect</option></select></div>
+                    <div class="col-12"><label class="form-label fw-semibold" for="confessionDescription">Description</label><textarea class="form-control" id="confessionDescription" name="description" rows="5" maxlength="5000" required></textarea></div>
+                    <div class="col-12"><label class="form-label fw-semibold" for="confessionMedia">Media or attachments</label><input class="form-control" id="confessionMedia" name="media" type="file" multiple accept="image/*,video/*,audio/*,application/pdf"></div>
+                </div>
+            </div>
+            <div class="modal-footer"><button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button><button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane me-2"></i>Post Anonymously</button></div>
+        </form>
+    </div>
+</div>
+<% } %>
 <!-- Emergency Banner -->
 <div class="emergency-wrapper">
     <div class="emergency-pulse"></div>
@@ -951,7 +1270,7 @@
         <i class="fas fa-smile"></i>
     </button>
     <div class="mood-message" id="moodMessage">
-        You're doing great! 🌟
+        You're doing great! ðŸŒŸ
     </div>
 </div>
 
@@ -975,11 +1294,11 @@
                     <div class="col-md-6">
                         <h6><i class="fas fa-check-circle text-success me-2"></i>How It Works</h6>
                         <ul class="list-unstyled">
-                            <li class="mb-2">✓ Create an anonymous account</li>
-                            <li class="mb-2">✓ Choose your concern category</li>
-                            <li class="mb-2">✓ Chat with counselors in real-time</li>
-                            <li class="mb-2">✓ Get automated support when offline</li>
-                            <li class="mb-2">✓ Access emergency resources 24/7</li>
+                            <li class="mb-2">âœ“ Create an anonymous account</li>
+                            <li class="mb-2">âœ“ Choose your concern category</li>
+                            <li class="mb-2">âœ“ Chat with counselors in real-time</li>
+                            <li class="mb-2">âœ“ Get automated support when offline</li>
+                            <li class="mb-2">âœ“ Access emergency resources 24/7</li>
                         </ul>
                     </div>
                     <div class="col-md-6">
@@ -1000,296 +1319,302 @@
 
 
 
+<% if (locals.currentUser) { %>
 <script>
-let websiteRating = 0;
-let currentEditingId = null; // ✅ Track which review is being edited
+const wallState = {
+    posts: [],
+    categories: [],
+    savedOnly: false,
+    unread: 0,
+    currentUserRole: '<%= currentUser.role %>',
+    canCreatePost: <%= currentUser.role === 'student' ? 'true' : 'false' %>
+};
+
+const wallEls = {
+    posts: document.getElementById('confessionPosts'),
+    search: document.getElementById('wallSearch'),
+    category: document.getElementById('wallCategory'),
+    status: document.getElementById('wallStatus'),
+    sort: document.getElementById('wallSort'),
+    createCategory: document.getElementById('confessionCategory'),
+    form: document.getElementById('confessionForm'),
+    all: document.getElementById('showAllPosts'),
+    saved: document.getElementById('showSavedPosts'),
+    bell: document.getElementById('wallNotificationBell'),
+    count: document.getElementById('wallNotificationCount')
+};
+
+function wallEscape(value) {
+    return String(value || '').replace(/[&<>"']/g, char => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;'
+    }[char]));
+}
+
+function wallDate(value) {
+    return new Date(value).toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+}
+
+function wallToast(message, type = 'success') {
+    const toast = document.createElement('div');
+    toast.style.cssText = `position:fixed;right:24px;bottom:24px;z-index:99999;background:${type === 'error' ? '#ef4444' : '#10b981'};color:#fff;padding:12px 18px;border-radius:999px;font-weight:700;box-shadow:0 14px 35px rgba(15,23,42,.18);`;
+    toast.textContent = message;
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 2600);
+}
+
+function mediaMarkup(media = []) {
+    if (!media.length) return '';
+    return `<div class="wall-media">${media.map(item => {
+        const url = wallEscape(item.url);
+        if (item.type === 'image') return `<img src="${url}" alt="Post media" onclick="window.open('${url}','_blank')">`;
+        if (item.type === 'video') return `<video src="${url}" controls></video>`;
+        if (item.type === 'audio') return `<audio src="${url}" controls style="width:100%;"></audio>`;
+        return `<a class="btn btn-light border" href="${url}" download><i class="fas fa-paperclip me-1"></i>${wallEscape(item.originalName || 'Attachment')}</a>`;
+    }).join('')}</div>`;
+}
+
+function replyMarkup(post, reply) {
+    const indent = reply.parentReply ? '28px' : '0';
+    return `<div class="wall-reply ${reply.role === 'counselor' ? 'counselor' : ''}" style="--reply-indent:${indent}">
+        <div class="wall-reply-meta">
+            <div><strong>${wallEscape(reply.anonymousId)}</strong> ${reply.role === 'counselor' ? '<span class="wall-chip"><i class="fas fa-check-circle me-1"></i>Verified Counselor</span>' : ''} ${reply.isHelpfulAnswer ? '<span class="wall-chip resolved"><i class="fas fa-check me-1"></i>Most Helpful</span>' : ''}</div>
+            <small class="text-muted">${wallDate(reply.createdAt)}</small>
+        </div>
+        <p class="mb-2 mt-2">${wallEscape(reply.body)}</p>
+        <div class="d-flex gap-2 flex-wrap">
+            <button class="wall-action-btn" onclick="focusReply('${post.id}', '${reply.id}')"><i class="fas fa-reply me-1"></i>Reply</button>
+            ${post.isOwner ? `<button class="wall-action-btn" onclick="markHelpful('${post.id}', '${reply.id}')"><i class="fas fa-star me-1"></i>Helpful</button>` : ''}
+            ${reply.isOwner ? `<button class="wall-action-btn" onclick="editReply('${post.id}', '${reply.id}', '${wallEscape(reply.body).replace(/'/g, "\\'")}')"><i class="fas fa-edit me-1"></i>Edit</button><button class="wall-action-btn" onclick="deleteReply('${post.id}', '${reply.id}')"><i class="fas fa-trash me-1"></i>Delete</button>` : ''}
+        </div>
+    </div>`;
+}
+
+function postMarkup(post) {
+    const sentimentClass = post.sentiment === 'distressed' ? 'distressed' : post.sentiment === 'positive' ? 'positive' : '';
+    return `<article class="wall-card" id="post-${post.id}">
+        <div class="wall-card-header">
+            <div>
+                <span class="wall-anon">${wallEscape(post.anonymousId)}</span>
+                <span class="wall-chip">${wallEscape(post.category)}</span>
+                <span class="wall-chip ${sentimentClass}">${wallEscape(post.sentiment)}</span>
+                ${post.status === 'resolved' ? '<span class="wall-chip resolved">Resolved</span>' : ''}
+                ${post.moderation?.flagged ? '<span class="wall-chip distressed">Flagged for review</span>' : ''}
+            </div>
+            <small class="text-muted">${wallDate(post.createdAt)}</small>
+        </div>
+        <h3>${wallEscape(post.title)}</h3>
+        <p>${wallEscape(post.description)}</p>
+        ${mediaMarkup(post.media)}
+        <div class="wall-recommendations">${(post.recommendations || []).map(item => `<span class="wall-chip"><i class="fas fa-leaf me-1"></i>${wallEscape(item)}</span>`).join('')}</div>
+        <div class="wall-actions">
+            <div class="d-flex gap-2 flex-wrap">
+                ${reactionButton(post, 'support', 'heart', 'Support')}
+                ${reactionButton(post, 'meToo', 'handshake', 'Me Too')}
+                ${reactionButton(post, 'helpful', 'lightbulb', 'Helpful')}
+                ${reactionButton(post, 'stayStrong', 'hands-praying', 'Stay Strong')}
+                <button class="wall-action-btn ${post.saved ? 'active' : ''}" onclick="toggleSave('${post.id}')"><i class="fas fa-bookmark me-1"></i>${post.saved ? 'Saved' : 'Save'}</button>
+            </div>
+            <div class="d-flex gap-2 flex-wrap">
+                ${post.isOwner ? `<button class="wall-action-btn" onclick="toggleResolved('${post.id}')"><i class="fas fa-check me-1"></i>${post.status === 'resolved' ? 'Reopen' : 'Resolve'}</button><button class="wall-action-btn" onclick="editPost('${post.id}')"><i class="fas fa-edit me-1"></i>Edit</button><button class="wall-action-btn" onclick="deletePost('${post.id}')"><i class="fas fa-trash me-1"></i>Delete</button>` : ''}
+            </div>
+        </div>
+        <div class="wall-replies">
+            <strong>${post.replyCount} replies</strong>
+            ${(post.replies || []).map(reply => replyMarkup(post, reply)).join('')}
+            <form class="d-flex gap-2 flex-wrap" onsubmit="submitReply(event, '${post.id}')">
+                <input type="hidden" name="parentReply">
+                <input class="form-control flex-grow-1" name="body" placeholder="${wallState.currentUserRole === 'counselor' ? 'Give guidance as a verified counselor...' : 'Reply anonymously...'}" required>
+                ${wallState.currentUserRole === 'counselor' ? '<label class="d-flex align-items-center gap-1 small"><input type="checkbox" name="isCounselorRecommendation"> Resource</label>' : ''}
+                <button class="btn btn-primary" type="submit"><i class="fas fa-paper-plane"></i></button>
+            </form>
+        </div>
+    </article>`;
+}
+
+function reactionButton(post, key, icon, label) {
+    return `<button class="wall-action-btn ${post.myReactions?.[key] ? 'active' : ''}" onclick="toggleReaction('${post.id}', '${key}')"><i class="fas fa-${icon} me-1"></i>${label} ${post.reactionCounts?.[key] || 0}</button>`;
+}
+
+function renderWall() {
+    if (!wallEls.posts) return;
+    if (!wallState.posts.length) {
+        wallEls.posts.innerHTML = '<div class="wall-empty"><i class="fas fa-comments fa-2x mb-3 text-primary"></i><h4>No posts yet</h4><p class="mb-0">Start the first anonymous discussion.</p></div>';
+        return;
+    }
+    wallEls.posts.innerHTML = wallState.posts.map(postMarkup).join('');
+    renderSidebar();
+}
+
+function renderSidebar() {
+    const trending = [...wallState.posts].sort((a, b) => b.replyCount - a.replyCount).slice(0, 4);
+    const helpful = [...wallState.posts].sort((a, b) => (b.reactionCounts?.helpful || 0) - (a.reactionCounts?.helpful || 0)).slice(0, 4);
+    document.getElementById('wallTrending').innerHTML = trending.map(p => `<div class="wall-stat"><span>${wallEscape(p.category)}</span><strong>${p.replyCount}</strong></div>`).join('') || '<p class="text-muted mb-0">No activity yet.</p>';
+    document.getElementById('wallHelpful').innerHTML = helpful.map(p => `<div class="mb-2"><strong>${wallEscape(p.title)}</strong><div class="text-muted small">${p.reactionCounts?.helpful || 0} helpful reactions</div></div>`).join('') || '<p class="text-muted mb-0">No helpful posts yet.</p>';
+}
+
+function fillCategories(categories) {
+    [wallEls.category, wallState.canCreatePost ? wallEls.createCategory : null].forEach(select => {
+        if (!select || select.dataset.ready) return;
+        const first = select.id === 'confessionCategory' ? '<option value="">Auto detect</option>' : '<option value="">All categories</option>';
+        select.innerHTML = first + categories.map(c => `<option value="${wallEscape(c)}">${wallEscape(c)}</option>`).join('');
+        select.dataset.ready = 'true';
+    });
+}
+
+async function loadWall() {
+    const params = new URLSearchParams();
+    if (wallEls.search?.value.trim()) params.set('search', wallEls.search.value.trim());
+    if (wallEls.category?.value) params.set('category', wallEls.category.value);
+    if (wallEls.status?.value) params.set('status', wallEls.status.value);
+    if (wallEls.sort?.value) params.set('sort', wallEls.sort.value);
+    if (wallState.savedOnly) params.set('saved', 'true');
+    const res = await fetch(`/api/confessions?${params.toString()}`, { credentials: 'same-origin' });
+    const data = await res.json();
+    if (!data.success) throw new Error(data.message || 'Could not load wall');
+    wallState.posts = data.posts || [];
+    wallState.categories = data.categories || [];
+    fillCategories(wallState.categories);
+    document.getElementById('wallStatPosts').textContent = data.stats.posts || 0;
+    document.getElementById('wallStatResolved').textContent = data.stats.resolved || 0;
+    document.getElementById('wallStatReplies').textContent = data.stats.replies || 0;
+    renderWall();
+}
+
+async function wallRequest(url, options = {}) {
+    const res = await fetch(url, { credentials: 'same-origin', ...options });
+    const data = await res.json();
+    if (!data.success) throw new Error(data.message || 'Request failed');
+    if (data.post) upsertPost(data.post);
+    return data;
+}
+
+function upsertPost(post) {
+    const index = wallState.posts.findIndex(item => String(item.id) === String(post.id));
+    if (index >= 0) wallState.posts[index] = post;
+    else wallState.posts.unshift(post);
+    if (wallState.savedOnly && !post.saved) wallState.posts = wallState.posts.filter(item => String(item.id) !== String(post.id));
+    renderWall();
+}
+
+async function toggleReaction(postId, reaction) { try { await wallRequest(`/api/confessions/${postId}/reactions/${reaction}`, { method: 'POST' }); } catch (e) { wallToast(e.message, 'error'); } }
+async function toggleSave(postId) { try { await wallRequest(`/api/confessions/${postId}/save`, { method: 'POST' }); } catch (e) { wallToast(e.message, 'error'); } }
+async function toggleResolved(postId) { try { await wallRequest(`/api/confessions/${postId}/resolve`, { method: 'POST' }); } catch (e) { wallToast(e.message, 'error'); } }
+async function markHelpful(postId, replyId) { try { await wallRequest(`/api/confessions/${postId}/helpful/${replyId}`, { method: 'POST' }); } catch (e) { wallToast(e.message, 'error'); } }
+
+function focusReply(postId, replyId) {
+    const form = document.querySelector(`#post-${postId} form`);
+    if (!form) return;
+    form.parentReply.value = replyId;
+    form.body.placeholder = 'Replying in thread...';
+    form.body.focus();
+}
+
+async function submitReply(event, postId) {
+    event.preventDefault();
+    const form = event.currentTarget;
+    try {
+        await wallRequest(`/api/confessions/${postId}/replies`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                body: form.body.value,
+                parentReply: form.parentReply.value,
+                isCounselorRecommendation: !!form.isCounselorRecommendation?.checked
+            })
+        });
+        form.reset();
+        form.parentReply.value = '';
+    } catch (e) { wallToast(e.message, 'error'); }
+}
+
+async function editReply(postId, replyId, currentBody) {
+    const body = prompt('Edit reply', currentBody);
+    if (!body) return;
+    try { await wallRequest(`/api/confessions/${postId}/replies/${replyId}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ body }) }); } catch (e) { wallToast(e.message, 'error'); }
+}
+
+async function deleteReply(postId, replyId) {
+    if (!confirm('Delete this reply?')) return;
+    try { await wallRequest(`/api/confessions/${postId}/replies/${replyId}`, { method: 'DELETE' }); } catch (e) { wallToast(e.message, 'error'); }
+}
+
+async function editPost(postId) {
+    const post = wallState.posts.find(item => String(item.id) === String(postId));
+    if (!post) return;
+    const title = prompt('Edit title', post.title);
+    if (!title) return;
+    const description = prompt('Edit description', post.description);
+    if (!description) return;
+    try { await wallRequest(`/api/confessions/${postId}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ title, description, category: post.category }) }); } catch (e) { wallToast(e.message, 'error'); }
+}
+
+async function deletePost(postId) {
+    if (!confirm('Delete this post?')) return;
+    try {
+        await wallRequest(`/api/confessions/${postId}`, { method: 'DELETE' });
+        wallState.posts = wallState.posts.filter(item => String(item.id) !== String(postId));
+        renderWall();
+    } catch (e) { wallToast(e.message, 'error'); }
+}
 
 document.addEventListener('DOMContentLoaded', () => {
-    loadWebsiteReviews();
-    checkIfAlreadyReviewed();
-
-    document.querySelectorAll('.review-star').forEach(star => {
-        star.addEventListener('click', () => {
-            websiteRating = parseInt(star.dataset.val);
-            document.querySelectorAll('.review-star').forEach((s, i) => {
-                s.style.color = i < websiteRating ? '#fbbf24' : '#d1d5db';
-                s.style.transform = i < websiteRating ? 'scale(1.2)' : 'scale(1)';
-            });
-        });
-        star.addEventListener('mouseenter', () => {
-            const val = parseInt(star.dataset.val);
-            document.querySelectorAll('.review-star').forEach((s, i) => {
-                s.style.color = i < val ? '#fbbf24' : '#d1d5db';
-            });
-        });
-        star.addEventListener('mouseleave', () => {
-            document.querySelectorAll('.review-star').forEach((s, i) => {
-                s.style.color = i < websiteRating ? '#fbbf24' : '#d1d5db';
-            });
-        });
+    loadWall().catch(e => wallToast(e.message, 'error'));
+    [wallEls.search, wallEls.category, wallEls.status, wallEls.sort].forEach(el => el?.addEventListener('input', () => loadWall().catch(e => wallToast(e.message, 'error'))));
+    wallEls.all?.addEventListener('click', () => { wallState.savedOnly = false; wallEls.all.classList.add('active'); wallEls.saved.classList.remove('active'); loadWall(); });
+    wallEls.saved?.addEventListener('click', () => { wallState.savedOnly = true; wallEls.saved.classList.add('active'); wallEls.all.classList.remove('active'); loadWall(); });
+    if (wallState.canCreatePost) wallEls.form?.addEventListener('submit', async event => {
+        event.preventDefault();
+        const button = wallEls.form.querySelector('button[type="submit"]');
+        button.disabled = true;
+        try {
+            const data = await wallRequest('/api/confessions', { method: 'POST', body: new FormData(wallEls.form) });
+            wallEls.form.reset();
+            bootstrap.Modal.getInstance(document.getElementById('confessionModal'))?.hide();
+            wallToast('Post created anonymously.');
+            upsertPost(data.post);
+        } catch (e) {
+            wallToast(e.message, 'error');
+        } finally {
+            button.disabled = false;
+        }
     });
+
+    if (typeof io !== 'undefined') {
+        const wallSocket = io({ auth: { userId: '<%= currentUser._id %>', role: '<%= currentUser.role %>' } });
+        wallSocket.on('connect', () => wallSocket.emit('join-confession-wall'));
+        wallSocket.on('confession:new', upsertPost);
+        wallSocket.on('confession:updated', upsertPost);
+        wallSocket.on('confession:deleted', payload => { wallState.posts = wallState.posts.filter(item => String(item.id) !== String(payload.id)); renderWall(); });
+        wallSocket.on('wall-notification', payload => {
+            wallState.unread += 1;
+            wallEls.count.textContent = wallState.unread;
+            wallEls.count.classList.remove('d-none');
+            wallToast(payload.message || 'New wall notification');
+        });
+        wallEls.bell?.addEventListener('click', () => {
+            wallState.unread = 0;
+            wallEls.count.classList.add('d-none');
+            wallEls.count.textContent = '0';
+        });
+    }
 });
-
-async function loadWebsiteReviews() {
-    try {
-        const res = await fetch('/api/ratings/website');
-        const data = await res.json();
-        const grid = document.getElementById('reviewsGrid');
-        const currentUserId = '<%= locals.currentUser ? locals.currentUser._id.toString() : "" %>';
-
-        if (!data.success || data.reviews.length === 0) {
-            grid.innerHTML = `
-                <div class="col-12 text-center py-5">
-                    <div style="background:linear-gradient(135deg,#f0f7ff,#e6f0fa);border-radius:20px;padding:40px;border:2px dashed #6B8CFF33;">
-                        <i class="fas fa-comment-dots" style="font-size:3rem;color:#6B8CFF;opacity:0.5;margin-bottom:15px;display:block;"></i>
-                        <p style="color:#6B6B6B;margin:0;font-size:1.1rem;">Be the first to share your experience!</p>
-                    </div>
-                </div>`;
-            return;
-        }
-
-        grid.innerHTML = data.reviews.map(r => {
-            // ✅ Safe string comparison — both converted to string
-            const isAuthor = currentUserId && r.studentId && currentUserId === String(r.studentId);
-            
-            // ✅ Escape review text safely for use in data attribute
-            const safeText = r.reviewText.replace(/"/g, '&quot;');
-            
-            const authorActions = isAuthor ? `
-                <div style="display:flex;gap:8px;margin-top:10px;">
-                    <button 
-                        data-id="${r._id}" 
-                        data-rating="${r.rating}" 
-                        data-text="${safeText}"
-                        onclick="editReview(this)"
-                        style="background:#6B8CFF;color:white;border:none;border-radius:20px;padding:5px 14px;font-size:0.8rem;cursor:pointer;">
-                        <i class="fas fa-edit me-1"></i>Edit
-                    </button>
-                    <button 
-                        data-id="${r._id}"
-                        onclick="deleteReview(this)"
-                        style="background:#ef4444;color:white;border:none;border-radius:20px;padding:5px 14px;font-size:0.8rem;cursor:pointer;">
-                        <i class="fas fa-trash me-1"></i>Delete
-                    </button>
-                </div>` : '';
-
-            return `
-            <div class="col-md-6 col-lg-4" id="review-card-${r._id}">
-                <div style="background:white;border-radius:24px;padding:28px 24px;border:1px solid rgba(107,140,255,0.15);box-shadow:0 8px 30px rgba(107,140,255,0.08);height:100%;transition:transform 0.3s ease,box-shadow 0.3s ease;"
-                     onmouseenter="this.style.transform='translateY(-5px)';this.style.boxShadow='0 15px 40px rgba(107,140,255,0.15)'"
-                     onmouseleave="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 30px rgba(107,140,255,0.08)'">
-                    <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
-                        <div style="width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#6B8CFF,#A8D5E5);display:flex;align-items:center;justify-content:center;color:white;flex-shrink:0;">
-                            <i class="fas fa-user-secret" style="font-size:1.2rem;"></i>
-                        </div>
-                        <div>
-                            <div style="font-weight:700;color:#1A2B4C;font-size:0.95rem;">${r.username}</div>
-                            <div style="color:#fbbf24;font-size:1rem;letter-spacing:1px;">${'★'.repeat(r.rating)}${'☆'.repeat(5 - r.rating)}</div>
-                        </div>
-                    </div>
-                    <div style="background:linear-gradient(135deg,#f8faff,#f0f7ff);border-radius:14px;padding:14px 16px;margin-bottom:14px;border-left:3px solid #6B8CFF;">
-                        <p style="color:#475569;line-height:1.7;font-size:0.95rem;margin:0;font-style:italic;">"${r.reviewText}"</p>
-                    </div>
-                    <div style="color:#94a3b8;font-size:0.78rem;display:flex;align-items:center;gap:5px;">
-                        <i class="fas fa-clock"></i>
-                        ${new Date(r.date).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}
-                    </div>
-                    ${authorActions}
-                </div>
-            </div>`;
-        }).join('');
-    } catch(e) {
-        console.error('Load reviews error:', e);
-    }
-}
-
-// ✅ Now receives the button element directly — no selector guesswork
-function editReview(btnEl) {
-    const reviewId = btnEl.dataset.id;
-    const currentRating = parseInt(btnEl.dataset.rating);
-    const currentText = btnEl.dataset.text.replace(/&quot;/g, '"');
-
-    currentEditingId = reviewId; // ✅ Store globally
-
-    websiteRating = currentRating;
-    document.getElementById('reviewText').value = currentText;
-
-    document.querySelectorAll('.review-star').forEach((s, i) => {
-        s.style.color = i < currentRating ? '#fbbf24' : '#d1d5db';
-        s.style.transform = i < currentRating ? 'scale(1.2)' : 'scale(1)';
-    });
-
-    // ✅ Update button to show Update mode
-    const submitBtn = document.getElementById('reviewSubmitBtn');
-    submitBtn.innerHTML = '<i class="fas fa-save me-2"></i>Update Review';
-    submitBtn.style.background = 'linear-gradient(135deg,#10b981,#059669)';
-    submitBtn.disabled = false;
-    submitBtn.style.opacity = '1';
-
-    document.getElementById('reviewAlreadyMsg').style.display = 'none';
-    document.getElementById('reviewSuccessMsg').style.display = 'none';
-
-    submitBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
-}
-
-async function deleteReview(btnEl) {
-    const reviewId = btnEl.dataset.id;
-    if (!confirm('Delete your review?')) return;
-
-    try {
-        const res = await fetch(`/api/ratings/website/${reviewId}`, {
-            method: 'DELETE',
-            credentials: 'same-origin'
-        });
-        const data = await res.json();
-        if (data.success) {
-            document.getElementById(`review-card-${reviewId}`)?.remove();
-            showReviewToast('Review deleted!', 'success');
-            currentEditingId = null;
-
-            // Re-enable submit form
-            const submitBtn = document.getElementById('reviewSubmitBtn');
-            if (submitBtn) {
-                submitBtn.disabled = false;
-                submitBtn.style.opacity = '1';
-                submitBtn.style.background = 'linear-gradient(135deg,#667eea,#764ba2)';
-                submitBtn.innerHTML = '<i class="fas fa-paper-plane me-2"></i>Submit Review';
-            }
-            document.getElementById('reviewAlreadyMsg').style.display = 'none';
-            document.getElementById('reviewText').value = '';
-            websiteRating = 0;
-            document.querySelectorAll('.review-star').forEach(s => {
-                s.style.color = '#d1d5db';
-                s.style.transform = 'scale(1)';
-            });
-        } else {
-            showReviewToast(data.message, 'error');
-        }
-    } catch(e) {
-        showReviewToast('Error deleting review', 'error');
-    }
-}
-
-// ✅ Single unified submit function — handles both create and update
-async function submitWebsiteReview() {
-    if (!websiteRating) {
-        showReviewToast('Please select a star rating first! ⭐', 'error');
-        return;
-    }
-    const reviewText = document.getElementById('reviewText').value.trim();
-    if (!reviewText) {
-        showReviewToast('Please write a short review!', 'error');
-        return;
-    }
-
-    const submitBtn = document.getElementById('reviewSubmitBtn');
-    const isEditing = !!currentEditingId;
-    const origText = submitBtn.innerHTML;
-
-    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>' + (isEditing ? 'Updating...' : 'Submitting...');
-    submitBtn.disabled = true;
-
-    try {
-        const url = isEditing ? `/api/ratings/website/${currentEditingId}` : '/api/ratings/website';
-        const method = isEditing ? 'PUT' : 'POST';
-
-        const res = await fetch(url, {
-            method,
-            headers: { 'Content-Type': 'application/json' },
-            credentials: 'same-origin',
-            body: JSON.stringify({ rating: websiteRating, reviewText })
-        });
-        const data = await res.json();
-
-        if (data.success) {
-            showReviewToast(isEditing ? 'Review updated!' : 'Review submitted!', 'success');
-
-            // Reset form
-            document.getElementById('reviewText').value = '';
-            websiteRating = 0;
-            currentEditingId = null;
-            document.querySelectorAll('.review-star').forEach(s => {
-                s.style.color = '#d1d5db';
-                s.style.transform = 'scale(1)';
-            });
-
-            submitBtn.innerHTML = '<i class="fas fa-check me-2"></i>' + (isEditing ? 'Updated!' : 'Submitted!');
-            submitBtn.style.background = 'linear-gradient(135deg,#10b981,#059669)';
-
-            setTimeout(() => {
-                // After update: lock again (already reviewed); after new submit: lock too
-                submitBtn.disabled = true;
-                submitBtn.style.opacity = '0.6';
-                submitBtn.innerHTML = '<i class="fas fa-check me-2"></i>Already Reviewed';
-                document.getElementById('reviewAlreadyMsg').style.display = 'block';
-                document.getElementById('reviewSuccessMsg').style.display = isEditing ? 'none' : 'block';
-            }, 1500);
-
-            setTimeout(loadWebsiteReviews, 500);
-        } else {
-            submitBtn.innerHTML = origText;
-            submitBtn.disabled = false;
-            showReviewToast(data.message || 'Error. Please try again.', 'error');
-        }
-    } catch(e) {
-        submitBtn.innerHTML = origText;
-        submitBtn.disabled = false;
-        showReviewToast('Server error. Please try again.', 'error');
-    }
-}
-
-function checkIfAlreadyReviewed() {
-    fetch('/api/ratings/website/check', { credentials: 'same-origin' })
-        .then(r => { if (!r.ok) return null; return r.json(); })
-        .then(data => {
-            if (data && data.hasReviewed) {
-                const msg = document.getElementById('reviewAlreadyMsg');
-                if (msg) msg.style.display = 'block';
-                const btn = document.getElementById('reviewSubmitBtn');
-                if (btn) {
-                    btn.disabled = true;
-                    btn.style.opacity = '0.6';
-                    btn.innerHTML = '<i class="fas fa-check me-2"></i>Already Reviewed';
-                }
-            }
-        })
-        .catch(() => {});
-}
-
-function showReviewToast(message, type) {
-    const existing = document.getElementById('reviewToast');
-    if (existing) existing.remove();
-    const toast = document.createElement('div');
-    toast.id = 'reviewToast';
-    toast.style.cssText = `
-        position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(80px);
-        background:${type === 'error' ? '#ef4444' : '#10b981'};color:white;
-        padding:14px 28px;border-radius:50px;font-weight:600;font-size:0.95rem;
-        box-shadow:0 10px 30px rgba(0,0,0,0.15);z-index:99999;
-        transition:transform 0.3s ease;display:flex;align-items:center;gap:8px;`;
-    toast.innerHTML = `<i class="fas fa-${type === 'error' ? 'exclamation-circle' : 'check-circle'}"></i>${message}`;
-    document.body.appendChild(toast);
-    setTimeout(() => toast.style.transform = 'translateX(-50%) translateY(0)', 10);
-    setTimeout(() => {
-        toast.style.transform = 'translateX(-50%) translateY(80px)';
-        setTimeout(() => toast.remove(), 300);
-    }, 3000);
-}
 </script>
-
-
-
+<% } %>
 <script>
 // Mood booster messages
 const moodMessages = [
-    "You're stronger than you think! 💪",
-    "This too shall pass 🌈",
-    "Take a deep breath 🌬️",
-    "You matter! ❤️",
-    "Small steps are still progress 👣",
-    "It's okay to not be okay 🌻",
-    "You're doing amazing! ✨",
-    "Hope is on the way 🌅"
+    "You're stronger than you think! ðŸ’ª",
+    "This too shall pass ðŸŒˆ",
+    "Take a deep breath ðŸŒ¬ï¸",
+    "You matter! â¤ï¸",
+    "Small steps are still progress ðŸ‘£",
+    "It's okay to not be okay ðŸŒ»",
+    "You're doing amazing! âœ¨",
+    "Hope is on the way ðŸŒ…"
 ];
 
 let messageIndex = 0;
@@ -1384,10 +1709,12 @@ observer.observe(document.querySelector('.stats-wrapper'));
 // Welcome message for new users
 if (!localStorage.getItem('visited')) {
     setTimeout(() => {
-        alert('Welcome! Remember, you are not alone. We are here to support you. 💙');
+        alert('Welcome! Remember, you are not alone. We are here to support you. ðŸ’™');
         localStorage.setItem('visited', 'true');
     }, 2000);
 }
 </script>
 
 <%- include('partials/footer') %>
+
+

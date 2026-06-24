@@ -28,6 +28,19 @@ const chatSchema = new mongoose.Schema({
             text: {
                 type: String
             },
+            messageType: {
+                type: String,
+                enum: ['text', 'voice'],
+                default: 'text'
+            },
+            voice: {
+                url: String,
+                filename: String,
+                mimeType: String,
+                size: Number,
+                duration: Number,
+                deleted: { type: Boolean, default: false }
+            },
             timestamp: {
                 type: Date,
                 default: Date.now
@@ -36,12 +49,18 @@ const chatSchema = new mongoose.Schema({
                 type: mongoose.Schema.Types.ObjectId,
                 ref: 'User'
             }],
+            deliveredTo: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+            seenBy: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
                edited: { type: Boolean, default: false },
                deletedForAll: { type: Boolean, default: false },
+               deletedAt: Date,
                deletedFor: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
                  replyTo: {
                  messageId: { type: mongoose.Schema.Types.ObjectId },
-               text: { type: String }  
+               text: { type: String },
+               messageType: { type: String, enum: ['text', 'voice', 'image', 'file'], default: 'text' },
+               duration: Number,
+               deletedForAll: { type: Boolean, default: false }
      }
              
         }
