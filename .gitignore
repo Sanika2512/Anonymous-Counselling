@@ -7,3 +7,12 @@ client/public/uploads/
 server.err.log
 server.out.log
 *.log
+*.out.log
+*.err.log
+# Temporary folders
+work-responsive-render/
+# OS files
+.DS_Store
+Thumbs.db
+# Process files
+*.pid

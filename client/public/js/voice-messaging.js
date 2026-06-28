@@ -59,20 +59,20 @@
       .voice-status{display:flex;align-items:center;gap:8px;min-height:32px;color:#475569;font-size:13px;font-weight:600}
       .voice-dot{width:8px;height:8px;border-radius:50%;background:#dc2626;box-shadow:0 0 0 4px rgba(220,38,38,.12)}
       .voice-preview{display:flex;align-items:center;gap:10px;width:100%;padding:8px 10px;border:1px solid #dbeafe;border-radius:12px;background:#f8fbff}
-      .voice-preview audio{height:34px;flex:1;min-width:160px}
-      .voice-progress{height:5px;width:120px;background:#e2e8f0;border-radius:999px;overflow:hidden}
+      .voice-preview audio{height:34px;flex:1;min-width:0}
+      .voice-progress{height:5px;width:min(120px,100%);background:#e2e8f0;border-radius:999px;overflow:hidden}
       .voice-progress span{display:block;height:100%;width:0;background:#2563eb;transition:width .15s ease}
       .voice-error{width:100%;font-size:13px;color:#b91c1c;background:#fee2e2;border:1px solid #fecaca;border-radius:10px;padding:8px 10px}
-      .voice-bubble{min-width:230px;max-width:320px}
+      .voice-bubble{min-width:0;width:min(320px,100%);max-width:100%}
       .voice-bubble-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:6px;font-size:12px;opacity:.82}
       .voice-player{display:flex;align-items:center;gap:10px}
       .voice-play-btn{width:36px;height:36px;border-radius:50%;border:0;background:rgba(255,255,255,.9);color:#1d4ed8;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;flex:0 0 auto}
       .message-incoming .voice-play-btn,.message.received .voice-play-btn{background:#e0f2fe;color:#0369a1}
-      .voice-seek{appearance:none;width:150px;height:5px;border-radius:999px;background:rgba(15,23,42,.18);outline:none}
+      .voice-seek{appearance:none;width:clamp(90px,28vw,150px);height:5px;border-radius:999px;background:rgba(15,23,42,.18);outline:none}
       .voice-seek::-webkit-slider-thumb{appearance:none;width:13px;height:13px;border-radius:50%;background:#2563eb;cursor:pointer}
       .voice-time{font-size:12px;font-weight:700;white-space:nowrap;opacity:.8}
       @keyframes voicePulse{0%,100%{box-shadow:0 0 0 0 rgba(220,38,38,.28)}50%{box-shadow:0 0 0 8px rgba(220,38,38,0)}}
-      @media(max-width:640px){.voice-bubble{min-width:190px;max-width:260px}.voice-seek{width:110px}.voice-preview audio{min-width:120px}}
+      @media(max-width:640px){.voice-bubble{width:min(260px,100%)}.voice-seek{width:clamp(82px,32vw,110px)}.voice-preview audio{min-width:0}}
     `;
     document.head.appendChild(style);
   }

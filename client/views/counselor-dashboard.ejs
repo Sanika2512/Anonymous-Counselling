@@ -1321,8 +1321,8 @@ html, body {
 /* Dashboard Layout */
 .dashboard-container {
     display: flex;
-    min-height: calc(100vh - var(--navbar-height));
-    height: calc(100vh - var(--navbar-height));
+    min-height: calc(100dvh - var(--navbar-height));
+    height: calc(100dvh - var(--navbar-height));
     overflow: hidden;
     background: var(--light-bg);
      position: sticky;
@@ -1332,7 +1332,7 @@ html, body {
 /* Left Sidebar - Profile (Unchanged from your original) */
 .profile-sidebar {
     width: var(--sidebar-width);
-    height: calc(100vh - var(--navbar-height));
+    height: calc(100dvh - var(--navbar-height));
     position: sticky; 
     top: var(--navbar-height); 
     overflow-y: auto;
@@ -1583,7 +1583,7 @@ html, body {
 /* Conversations Panel */
 .conversations-panel {
     width: var(--conversations-width);
-    height: calc(100vh - var(--navbar-height));
+    height: calc(100dvh - var(--navbar-height));
     position: sticky; /* ← हे add करा */
     top: var(--navbar-height); /* ← हे add करा */
     display: flex;
@@ -1740,7 +1740,7 @@ html, body {
 
 .chat-panel {
      flex: 1;
-    height: calc(100vh - var(--navbar-height));
+    height: calc(100dvh - var(--navbar-height));
     position: sticky; 
     top: var(--navbar-height); 
     display: flex;
@@ -1912,6 +1912,9 @@ html, body {
     padding: 15px 20px;
     background: white;
     border-top: 1px solid var(--border-color);
+    position: sticky;
+    bottom: 0;
+    z-index: 3;
 }
 
 .chat-input-area .input-group {
@@ -2354,13 +2357,13 @@ html, body {
     .conversations-panel {
         width: auto;
         height: calc(100dvh - 260px);
-        min-height: 520px;
+        min-height: 0;
         position: static;
         flex: none;
     }
 
     .chat-window {
-        min-height: 520px;
+        min-height: 0;
         height: calc(100dvh - 260px);
     }
 }
@@ -2438,8 +2441,10 @@ html, body {
 
     .chat-window {
         width: 100%;
-        min-height: 560px;
         height: calc(100dvh - 64px);
+        min-height: 0;
+        margin: 0;
+        border-radius: 0;
     }
 
     .chat-header {
@@ -2451,7 +2456,7 @@ html, body {
         min-width: 0;
     }
 
-    .chat-header h5,
+    .chat-header h6,
     .chat-header small {
         max-width: 58vw;
         overflow: hidden;
@@ -2465,7 +2470,7 @@ html, body {
     }
 
     .message {
-        max-width: 100%;
+        max-width: 88%;
     }
 
     .message-content {
@@ -2505,10 +2510,6 @@ html, body {
         max-width: 130px;
     }
 
-    .chat-window {
-        min-height: 520px;
-    }
-
     .voice-bubble {
         min-width: 0;
     }
@@ -2537,7 +2538,7 @@ html, body {
 
     .chat-window {
         height: calc(100dvh - 56px);
-        min-height: 390px;
+        min-height: 0;
     }
 }
 

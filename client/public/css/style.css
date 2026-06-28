@@ -1,7 +1,7 @@
 /* Responsive foundation loaded by every page. */
 :root {
   --app-safe-x: clamp(12px, 3vw, 32px);
-  --tap-target: 44px;
+  --tap-target: 48px;
 }
 
 *,
@@ -20,22 +20,22 @@ body {
   width: 100%;
   min-width: 0;
   overflow-x: hidden;
+  min-height: 100vh;
+  min-height: 100dvh;
 }
 
 main {
   min-width: 0;
+  width: 100%;
 }
 
 img,
 video,
+audio,
 canvas,
 svg {
   max-width: 100%;
   height: auto;
-}
-
-audio {
-  max-width: 100%;
 }
 
 iframe,
@@ -46,17 +46,36 @@ object {
 
 button,
 .btn,
-input,
 select,
 textarea,
-[role="button"] {
+[role="button"],
+input:not([type="radio"]):not([type="checkbox"]) {
   min-height: var(--tap-target);
 }
 
 input,
 select,
 textarea {
+  width: 100%;
   max-width: 100%;
+}
+
+input[type="radio"],
+input[type="checkbox"],
+.form-check-input {
+  width: 1em;
+  height: 1em;
+  min-width: 1em;
+  min-height: 1em;
+  flex: 0 0 1em;
+}
+
+.form-check-input[type="radio"] {
+  border-radius: 50%;
+}
+
+.form-check-input[type="checkbox"] {
+  border-radius: 0.25em;
 }
 
 textarea {
@@ -81,6 +100,72 @@ textarea {
 .message-bubble {
   max-width: 100%;
   overflow-wrap: anywhere;
+}
+
+.auth-shell {
+  width: 100%;
+  min-height: calc(100dvh - 76px);
+  display: grid;
+  place-items: center;
+  padding: clamp(16px, 4vw, 48px) var(--app-safe-x);
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 450px;
+  border-radius: 18px;
+}
+
+.signup-card {
+  max-width: 640px;
+}
+
+.auth-card .card-header {
+  padding: clamp(20px, 5vw, 32px) clamp(16px, 4vw, 28px);
+}
+
+.auth-card .card-body {
+  padding: clamp(18px, 4vw, 28px);
+}
+
+.auth-card .form-control,
+.auth-card .form-select,
+.auth-card .btn {
+  width: 100%;
+}
+
+.role-option-grid,
+.auth-role-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(118px, 1fr));
+  gap: 12px;
+  align-items: stretch;
+}
+
+.auth-role-row .form-check,
+.role-option-grid .form-check {
+  min-width: 0;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.role-option-grid .role-card,
+.role-option-grid .form-check,
+.role-option-grid .form-check-label {
+  width: 100%;
+}
+
+.form-actions-responsive {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.form-actions-responsive .btn {
+  flex: 1 1 160px;
 }
 
 .table-responsive,
@@ -227,10 +312,37 @@ table {
 
   .btn,
   button,
-  input,
   select,
-  textarea {
+  textarea,
+  input:not([type="radio"]):not([type="checkbox"]) {
     font-size: 16px;
+  }
+
+  .auth-shell {
+    min-height: calc(100dvh - 64px);
+    align-items: start;
+    padding-top: 18px;
+    padding-bottom: max(18px, env(safe-area-inset-bottom));
+  }
+
+  .auth-card {
+    border-radius: 16px !important;
+  }
+
+  .auth-card .card-header .fa-3x {
+    font-size: 2.25rem;
+  }
+
+  .auth-card .card-header h4 {
+    font-size: clamp(1.25rem, 6vw, 1.65rem);
+  }
+
+  .auth-role-row {
+    grid-template-columns: 1fr;
+  }
+
+  .form-actions-responsive {
+    flex-direction: column;
   }
 
   .modal-dialog {
